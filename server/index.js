@@ -4,7 +4,7 @@
 require('colors'); // Console colors :D
 const express = require('express');
 const logger = require('./logger');
-
+const socket = require('./socket');
 const argv = require('./argv');
 const port = require('./port');
 const setup = require('./middlewares/frontendMiddleware');
@@ -66,13 +66,8 @@ app.listen(port, host, async err => {
   }
 });
 
-console.log('server');
-
-// socketio
-io.on('connection', socket => {
-  const { name, room } = socket.handshake.query;
-  console.log(`${name} connected to ${room}`.green);
-});
+// Setup socket
+socket.setupSocket(io);
 
 http.listen(3001, () => {
   console.log('listening on 3001');

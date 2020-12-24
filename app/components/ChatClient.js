@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { emit } from './Connection';
+import { emit, registerChat } from './Connection';
 import { GLOBAL } from './GLOBAL';
 import '../css/main.css';
 
@@ -18,6 +18,7 @@ export default class ChatClient extends Component {
       commands: {},
       chats: [],
     };
+    registerChat(this);
     // const input = document.getElementById('chatInput');
     // input.addEventListener('keypress', key => {
     //   this.sendChat(key);
@@ -107,7 +108,6 @@ export default class ChatClient extends Component {
    * @param {string} name Name of the player who sent the message
    * @param {string} message Message that was sent
    * @param {boolean} me True if the sender matches the receiver
-   * @param {string} sendingTeam The name of the team that sent this message
    */
   addChatLine = (name, message, me) => {
     if (me) {
@@ -115,15 +115,6 @@ export default class ChatClient extends Component {
     } else {
       this.appendMessage(`${name}: ${message}`, 'chat');
     }
-  };
-
-  /**
-   * Chat box implementation for event announcements (capturing, etc)
-   * @param {string} message What message was sent
-   * @param {string} sendingTeam Subject of the message.
-   */
-  addChatAnnouncement = message => {
-    this.appendMessage(message, 'announcement');
   };
 
   // /**
@@ -143,13 +134,8 @@ export default class ChatClient extends Component {
   addLoginMessage = (name, me) => {
     // console.log(`${name} joined`);
     if (!me) {
-      this.appendMessage(`${name} has joined the room!`, 'login');
+      this.appendMessage(`${name} has joined the room!`, 'join');
     }
-  };
-
-  // Chat box implementation for the system.
-  addSystemLine = message => {
-    this.appendMessage(message, 'system');
   };
 
   // Places the message DOM node into the chat box.

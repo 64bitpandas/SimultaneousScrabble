@@ -11,5 +11,5 @@ import React from 'react';
 import ChatClient from '../../components/ChatClient';
 
 export default function HomePage() {
-  return <ChatClient />;
+  return <ChatClient player="testplayer" />;
 }
