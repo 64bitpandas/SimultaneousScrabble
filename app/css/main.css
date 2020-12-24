@@ -1,0 +1,53 @@
+/* **********
+ * *  CHAT  *
+ * ********** */
+
+.chatbox {
+  width: 25vw;
+  height: 45vh;
+  bottom: 2rem;
+  left: 2rem;
+  padding: 1.2rem;
+  position: absolute;
+  user-select: none;
+}
+
+.chatbox .chat-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  box-sizing: border-box;
+  height: 38vh;
+  overflow-wrap: break-word;
+  overflow-y: scroll;
+}
+
+.chatbox .chat-list li {
+  padding: 2px;
+  margin: 2px;
+}
+
+.chatbox .chat-list li.join {
+  color: #1b47e5;
+}
+
+.chatbox .chat-list li.system {
+  color: #9b59b6;
+}
+
+.chatbox .chat-list li.system:before {
+  content: "» ";
+}
+
+.chatbox .chat-input {
+  pointer-events: all;
+  box-sizing: border-box;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-top: 1px solid #DDD;
+  outline: none;
+  height: 5vh;
+  z-index: 50;
+  transition-duration: 0.7s;
+}
