@@ -62,7 +62,7 @@ module.exports = {
     'no-console': 1,
     'no-unused-vars': 2,
     'no-use-before-define': 0,
-    'prefer-template': 2,
+    'prefer-template': 0,
     'react/destructuring-assignment': 0,
     'react-hooks/rules-of-hooks': 'error',
     'react/jsx-closing-tag-location': 0,

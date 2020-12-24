@@ -31,6 +31,7 @@ import 'file-loader?name=.htaccess!./.htaccess';
 import configureStore from './configureStore';
 
 import { translationMessages } from './i18n';
+import { beginConnection } from './components/Connection';
 
 // Create redux store with history
 const initialState = {};
@@ -80,3 +81,5 @@ if (!window.Intl) {
 if (process.env.NODE_ENV === 'production') {
   require('offline-plugin/runtime').install(); // eslint-disable-line global-require
 }
+
+beginConnection('testroom', 'testname');

@@ -1,5 +1,7 @@
+/* eslint-disable no-console */
 /* eslint consistent-return:0 import/order:0 */
 
+require('colors'); // Console colors :D
 const express = require('express');
 const logger = require('./logger');
 
@@ -13,9 +15,18 @@ const ngrok =
     : false;
 const { resolve } = require('path');
 const app = express();
-
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept-Type',
+  );
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
-// app.use('/api', myApi);
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
@@ -53,4 +64,16 @@ app.listen(port, host, async err => {
   } else {
     logger.appStarted(port, prettyHost);
   }
+});
+
+console.log('server');
+
+// socketio
+io.on('connection', socket => {
+  const { name, room } = socket.handshake.query;
+  console.log(`${name} connected to ${room}`.green);
+});
+
+http.listen(3001, () => {
+  console.log('listening on 3001');
 });

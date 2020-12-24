@@ -66,10 +66,11 @@
   "dependencies": {
     "@babel/polyfill": "7.4.3",
     "chalk": "^2.4.2",
+    "colors": "^1.1.2",
     "compression": "1.7.4",
     "connected-react-router": "6.4.0",
     "cross-env": "5.2.0",
-    "express": "4.16.4",
+    "express": "^4.16.4",
     "fontfaceobserver": "2.1.0",
     "history": "4.9.0",
     "hoist-non-react-statics": "3.3.0",
@@ -90,6 +91,8 @@
     "redux-saga": "1.0.2",
     "reselect": "4.0.0",
     "sanitize.css": "8.0.0",
+    "socket.io": "^3.0.4",
+    "socket.io-client": "^3.0.4",
     "styled-components": "4.2.0"
   },
   "devDependencies": {
@@ -112,6 +115,7 @@
     "babel-plugin-react-intl": "3.0.1",
     "babel-plugin-styled-components": "1.10.0",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
+    "browserify": "^17.0.0",
     "circular-dependency-plugin": "5.0.2",
     "compare-versions": "3.4.0",
     "compression-webpack-plugin": "2.0.0",
@@ -139,6 +143,7 @@
     "lint-staged": "8.1.5",
     "ngrok": "3.1.1",
     "node-plop": "0.18.0",
+    "nodemon": "^2.0.6",
     "null-loader": "0.1.1",
     "offline-plugin": "5.0.6",
     "plop": "2.3.0",
@@ -161,5 +166,17 @@
     "webpack-hot-middleware": "2.24.3",
     "webpack-pwa-manifest": "4.0.0",
     "whatwg-fetch": "3.0.0"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
   }
 }
