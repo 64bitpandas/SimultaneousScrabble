@@ -8,20 +8,24 @@
  */
 
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, HashRouter } from 'react-router-dom';
 
 import HomePage from 'containers/HomePage/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import GamePage from '../GamePage';
 
 import GlobalStyle from '../../global-styles';
 
 export default function App() {
   return (
     <div>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route component={NotFoundPage} />
-      </Switch>
+      <HashRouter>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route exact path="/game" component={GamePage} />
+          <Route component={NotFoundPage} />
+        </Switch>
+      </HashRouter>
       <GlobalStyle />
     </div>
   );

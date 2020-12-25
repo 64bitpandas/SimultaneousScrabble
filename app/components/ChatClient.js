@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { emit, registerChat } from './Connection';
 import { GLOBAL } from './GLOBAL';
-import '../css/main.css';
+import '../css/chat.css';
 
 export default class ChatClient extends Component {
   // Use this constructor during init to connect ChatClient to the server

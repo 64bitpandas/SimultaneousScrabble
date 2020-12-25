@@ -1,0 +1,72 @@
+/* **************************
+ * Simultaneous Scrabble CSS
+ * Created by Ben Cuan
+ * ************************** */
+
+#container {
+  display: grid;
+  grid-template-rows: 100vh;
+  grid-template-columns: 100vw;
+}
+
+#main-panel {
+  justify-self: center;
+  align-self: center;
+  height: 70%;
+  width: 70%;
+}
+
+/* ************
+ * * BUTTONS  *
+ * ************ */
+
+.button {
+  position: relative;
+  margin: auto;
+  margin-top: 10px;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  font-size: large;
+  text-align: center;
+  border: 0;
+  cursor: pointer;
+  border-radius: 5px 5px 5px 5px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  margin-bottom: 10px;
+}
+
+.button:active,
+.button:hover {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  position: relative;
+}
+
+.button:disabled {
+  top: 0px !important;
+  background: #CCCCCC !important;
+  border-bottom: 2px solid #DDDDDD !important;
+  box-shadow: inset 0 -2px #DDDDDD !important;
+  -webkit-box-shadow: inset 0 #DDDDDD !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+  color: #BBBBBB !important;
+}
+
+.btn-primary {
+  background: #0050C1;
+  border-bottom: 2px solid #003CA8;
+  box-shadow: inset 0 -2px #003CA8;
+  -webkit-box-shadow: inset 0 #003CA8;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  color: white;
+}
+
+.btn-primary:active,
+.btn-primary:hover {
+  background: rgb(45, 90, 228);
+}

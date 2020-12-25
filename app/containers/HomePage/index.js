@@ -8,8 +8,12 @@
 import React from 'react';
 // import { FormattedMessage } from 'react-intl';
 // import messages from './messages';
-import ChatClient from '../../components/ChatClient';
+import MainPanel from '../../components/MainPanel';
 
 export default function HomePage() {
-  return <ChatClient player="testplayer" />;
+  return (
+    <div id="container">
+      <MainPanel />
+    </div>
+  );
 }
