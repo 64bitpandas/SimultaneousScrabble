@@ -1,9 +1,18 @@
+const { joinRoom, getData } = require('./game');
+
 /* eslint-disable no-console */
-const setupSocket = io => {
-  io.on('connection', socket => {
+
+let socket;
+let io;
+
+const setupSocket = i => {
+  i.on('connection', s => {
+    socket = s;
+    io = i;
     const { name, room } = socket.handshake.query;
     console.log(room);
     socket.join(room);
+    joinRoom(name, room);
     console.log('[Server] '.bold.blue + `${name} connected to ${room}`.green);
     socket.to(room).broadcast.emit('serverSendLoginMessage', { player: name });
     socket.to(room).on('playerChat', data => {
@@ -21,7 +30,15 @@ const setupSocket = io => {
         message: message.substring(0, 35),
       });
     });
+    socket.to(room).on('forceUpdate', () => {
+      sendUpdate(room, getData(room));
+    });
   });
 };
 
+const sendUpdate = (room, data) => {
+  io.in(room).emit('serverSendUpdate', data);
+};
+
 exports.setupSocket = setupSocket;
+exports.sendUpdate = sendUpdate;

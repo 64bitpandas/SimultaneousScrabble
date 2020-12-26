@@ -3,6 +3,8 @@ import { GLOBAL } from './GLOBAL';
 
 let socket;
 let chat;
+let leaderboard;
+let gameboard;
 
 export function beginConnection(room, name) {
   socket = io.connect(GLOBAL.LOCALHOST, {
@@ -23,6 +25,14 @@ export function beginConnection(room, name) {
       chat.addLoginMessage(data.player, false);
     }
   });
+  socket.on('serverSendUpdate', data => {
+    if (leaderboard) {
+      leaderboard.setState({ players: data.players });
+    }
+    if (gameboard) {
+      gameboard.setState({ board: data.board });
+    }
+  });
 }
 
 export function emit(event, data) {
@@ -31,4 +41,10 @@ export function emit(event, data) {
 
 export function registerChat(c) {
   chat = c;
+}
+export function registerLeaderboard(board) {
+  leaderboard = board;
+}
+export function registeGameboard(board) {
+  gameboard = board;
 }

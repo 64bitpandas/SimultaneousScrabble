@@ -4,13 +4,13 @@
  * ************************** */
 
 .chatbox {
-  width: 25vw;
-  height: 45vh;
-  bottom: 2rem;
-  left: 2rem;
+  width: 40vw;
+  height: 70vh;
+  top: 2rem;
+  right: 2rem;
   padding: 1.2rem;
   position: absolute;
-  user-select: none;
+  border: solid gray 2px;
 }
 
 .chatbox .chat-list {
@@ -18,7 +18,7 @@
   margin: 0;
   list-style: none;
   box-sizing: border-box;
-  height: 38vh;
+  height: 63vh;
   overflow-wrap: break-word;
   overflow-y: scroll;
 }
