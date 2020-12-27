@@ -31,8 +31,12 @@
   color: #1b47e5;
 }
 
-.chatbox .chat-list li.announcement {
+.chatbox .chat-list li.purple {
   color: #9b59b6;
+}
+
+.chatbox .chat-list li.red {
+  color: #fa5b79;
 }
 
 /* .chatbox .chat-list li.system:before {

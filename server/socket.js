@@ -6,6 +6,8 @@ const {
   deletePlayer,
 } = require('./game');
 
+const dictionary = require('./data/dictionary.json');
+
 /* eslint-disable no-console */
 
 let socket;
@@ -47,10 +49,33 @@ const setupSocket = i => {
       ]);
       sendUpdateToPlayer(room);
     });
+    // socket.to(room).on('submit', data => {
+
+    // });
+    socket.on('requestDefinition', data => {
+      const cleanedWord = data.word.trim().toLowerCase();
+      if (dictionary[cleanedWord]) {
+        socket.emit('serverSendAnnouncement', {
+          msg: `The definition of ${cleanedWord.toUpperCase()} is: ${
+            dictionary[cleanedWord]
+          }`,
+          color: 'purple',
+        });
+      } else {
+        socket.emit('serverSendAnnouncement', {
+          msg: `Sorry, no definition was found for ${cleanedWord.toUpperCase()}`,
+          color: 'purple',
+        });
+      }
+    });
     socket.to(room).on('forceUpdate', () => {
       sendUpdateToPlayer(room);
     });
     socket.on('disconnect', () => {
+      socket.to(room).broadcast.emit('serverSendAnnouncement', {
+        msg: `${name} has left the game`,
+        color: 'purple',
+      });
       console.log(`${name} has left ${room}`.yellow);
       deletePlayer(name, room);
     });

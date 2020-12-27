@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const socket = require('./socket');
+const twl = require('./data/twl.json');
 
 require('colors');
 
@@ -143,7 +144,14 @@ const setLetters = (room, player, letters) => {
   data[room].players.find(pl => pl.name === player).letters = letters;
 };
 const deletePlayer = (room, player) => {
-  data[room].players = data[room].players.filter(item => item.name !== player);
+  if (data[room])
+    data[room].players = data[room].players.filter(
+      item => item.name !== player,
+    );
+};
+const isWord = word => {
+  const cleanedWord = word.trim().toLowerCase();
+  return twl[cleanedWord];
 };
 
 exports.joinRoom = joinRoom;
@@ -151,3 +159,4 @@ exports.getData = getData;
 exports.setLetters = setLetters;
 exports.getPlayerData = getPlayerData;
 exports.deletePlayer = deletePlayer;
+exports.isWord = isWord;

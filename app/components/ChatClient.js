@@ -15,10 +15,11 @@ export default class ChatClient extends Component {
     super(props);
     this.state = {
       player: props.player,
-      commands: {},
+      cmds: {},
       chats: [],
       msgEl: null,
     };
+    this.registerFunctions();
     registerChat(this);
     // const input = document.getElementById('chatInput');
     // input.addEventListener('keypress', key => {
@@ -53,6 +54,7 @@ export default class ChatClient extends Component {
         maxLength="100"
         spellCheck="false"
         onKeyDown={this.sendChat}
+        autoComplete="off"
       />
     </div>
   );
@@ -67,10 +69,16 @@ export default class ChatClient extends Component {
    * Defines all commands and their behaviors.
    */
   registerFunctions = () => {
-    const self = this;
+    this.registerCommand(
+      'help',
+      'Information about the chat commands.',
+      this.printHelp,
+    );
 
-    this.registerCommand('help', 'Information about the chat commands.', () => {
-      self.printHelp();
+    this.registerCommand('define', 'Define a word.', args => {
+      emit('requestDefinition', {
+        word: args[0],
+      });
     });
 
     // this.registerCommand('login', 'Login as an admin.', function (args) {
@@ -80,7 +88,7 @@ export default class ChatClient extends Component {
     // this.registerCommand('kick', 'Kick a player, for admins only.', function (args) {
     //     self.socket.emit('kick', args);
     // });
-    global.chatClient = this;
+    // global.chatClient = this;
   };
 
   /**
@@ -143,10 +151,6 @@ export default class ChatClient extends Component {
   //   );
   // }
 
-  addAnnouncement = msg => {
-    this.appendMessage(msg, 'announcement');
-  };
-
   // Message to notify players when a new player joins
   addLoginMessage = (name, me) => {
     // console.log(`${name} joined`);
@@ -176,11 +180,12 @@ export default class ChatClient extends Component {
         // Chat command.
         if (text.indexOf(GLOBAL.CMD_PREFIX) === 0) {
           const args = text.substring(1).split(' ');
-          if (this.state.commands[args[0]]) {
-            this.state.commands[args[0]].callback(args.slice(1));
+          if (this.state.cmds[args[0]]) {
+            this.state.cmds[args[0]].callback(args.slice(1));
           } else {
-            this.addSystemLine(
+            this.appendMessage(
               `Unrecognized Command: ${text}, type -help for more info.`,
+              'red',
             );
           }
 
@@ -205,21 +210,26 @@ export default class ChatClient extends Component {
 
   // Allows for addition of commands.
   registerCommand = (name, description, callback) => {
-    this.commands[name] = {
-      description,
-      callback,
-    };
+    // this.setState(prevState => ({
+    //   commands: {
+    //     ...prevState.commands,
+    //     [name]: {
+    //       description,
+    //       callback,
+    //     },
+    //   },
+    // }));
+    this.state.cmds[name] = { description, callback };
+    // this.setState({ cmds: { help: { description, callback } } });
   };
 
   // Allows help to print the list of all the commands and their descriptions.
   printHelp = () => {
-    const self = this;
-    Object.keys(this.state.commands).forEach(key => {
-      if (self.state.commands[key].cmd) {
-        self.addSystemLine(
-          `-${self.state.commands[key].cmd}: ${
-            self.state.commands[key].description
-          }`,
+    Object.keys(this.state.cmds).forEach(key => {
+      if (this.state.cmds[key]) {
+        this.appendMessage(
+          `-${key}: ${this.state.cmds[key].description}`,
+          'purple',
         );
       }
     });

@@ -26,6 +26,9 @@ export function beginConnection(room, name) {
       chat.addLoginMessage(data.player, false);
     }
   });
+  socket.on('serverSendAnnouncement', data => {
+    chat.appendMessage(data.msg, data.color);
+  });
   socket.on('serverSendUpdate', data => {
     if (leaderboard) {
       leaderboard.setState({ players: data.players });
@@ -61,6 +64,6 @@ export function getGameboard() {
   return gameboard;
 }
 export function quitGame() {
-  chat.addAnnouncement(`${chat.state.player} has left the game`);
+  chat.appendMessage(`${chat.state.player} has left the game`, 'purple');
   socket.disconnect();
 }
