@@ -17,6 +17,7 @@ export default class ChatClient extends Component {
       player: props.player,
       commands: {},
       chats: [],
+      msgEl: null,
     };
     registerChat(this);
     // const input = document.getElementById('chatInput');
@@ -35,7 +36,13 @@ export default class ChatClient extends Component {
 
   render = () => (
     <div className="chatbox box" id="chatbox">
-      <ul id="chatList" className="chat-list">
+      <ul
+        id="chatList"
+        className="chat-list"
+        ref={el => {
+          this.state.msgEl = el;
+        }}
+      >
         {this.state.chats}
       </ul>
       <input
@@ -49,6 +56,12 @@ export default class ChatClient extends Component {
       />
     </div>
   );
+
+  componentDidUpdate = () => {
+    if (this.state.msgEl) {
+      this.state.msgEl.scrollTo(0, this.state.msgEl.scrollHeight + 100);
+    }
+  };
 
   /**
    * Defines all commands and their behaviors.

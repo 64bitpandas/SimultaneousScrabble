@@ -88,7 +88,7 @@ const SPECIALS = {
     [9, 9],
     [9, 5],
   ],
-  CENTER: [7, 7],
+  CENTER: [[7, 7]],
 };
 
 const joinRoom = (player, room) => {

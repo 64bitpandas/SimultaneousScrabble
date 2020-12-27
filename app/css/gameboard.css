@@ -1,9 +1,8 @@
 #gameboard {
   display: grid;
-  grid-template-columns: repeat(15, 3.5vw);
-  grid-template-rows: repeat(15, 3.5vw);
-  margin-left: 2vw;
-  margin-right: 2vw;
+  grid-template-columns: repeat(15, min(5vh, 3.5vw));
+  grid-template-rows: repeat(15, min(5vh, 3.5vw));
+  margin: 3vw;
 }
 
 .square {
