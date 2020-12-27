@@ -5,6 +5,7 @@ let socket;
 let chat;
 let leaderboard;
 let gameboard;
+let rack;
 
 export function beginConnection(room, name) {
   socket = io.connect(GLOBAL.LOCALHOST, {
@@ -30,7 +31,12 @@ export function beginConnection(room, name) {
       leaderboard.setState({ players: data.players });
     }
     if (gameboard) {
-      gameboard.setState({ board: data.board });
+      gameboard.updateBoard(data.board);
+    }
+    if (rack) {
+      rack.setState({
+        letters: data.players.filter(player => player.name === name)[0].letters,
+      });
     }
   });
 }
@@ -47,4 +53,10 @@ export function registerLeaderboard(board) {
 }
 export function registerGameboard(board) {
   gameboard = board;
+}
+export function registerRack(thisRack) {
+  rack = thisRack;
+}
+export function getGameboard() {
+  return gameboard;
 }

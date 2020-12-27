@@ -1,0 +1,14 @@
+#rack {
+  display: grid;
+  grid-template-columns: repeat(7, 5vw);
+  margin: 3vw;
+}
+
+.rack-letter {
+  background-color: beige;
+  height: 5vw;
+  border: solid black 1px;
+  margin: 3px;
+  padding: 1px;
+  font-size: 200%;
+}

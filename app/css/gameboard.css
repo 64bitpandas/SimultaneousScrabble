@@ -6,8 +6,8 @@
 }
 
 .square {
- background-color: gray;
- border: solid black 1px;
+  background-color: gray;
+  border: solid black 1px;
 }
 
 .square.TW {
@@ -28,4 +28,34 @@
 
 .square.CENTER {
   background-color: pink;
+}
+
+.overlay-good {
+  /* position: absolute; */
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(102, 255, 102, 0.5)
+}
+
+.overlay-bad {
+  /* position: absolute; */
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 0, 0, 0.5)
+}
+
+.red {
+  color: red;
+}
+
+.board-square {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 233, 171, 0.8);
 }

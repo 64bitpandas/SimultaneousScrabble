@@ -1,12 +1,15 @@
 import '../css/gameboard.css';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { emit, registerGameboard } from './Connection';
+import { GLOBAL } from './GLOBAL';
+import { BoardSquare } from './BoardSquare';
 
 export default class Gameboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // name: props.name,
+      name: props.name,
       board: [],
     };
     registerGameboard(this);
@@ -17,47 +20,58 @@ export default class Gameboard extends Component {
 
   renderBoard = () =>
     this.state.board.map(row =>
-      row.map(square => (
-        <div className={'square ' + square.modifier} key={square.id}>
-          <div className="letter {square.color}">
-            {square.letter === null || square.letter === 'BLANK'
-              ? ''
-              : square.letter}
-          </div>
-          <div className="letter-score {square.color}">
-            {letterValues[square.letter]}
-          </div>
-        </div>
-      )),
+      row.map(square => <BoardSquare key={square.id} space={square} />),
     );
+
+  updateBoard = newBoard => {
+    if (this.state.board.length === 0) {
+      this.setState({ board: newBoard });
+    } else {
+      this.setState(oldBoard => {
+        const updatedBoard = oldBoard.board;
+        for (let row = 0; row < newBoard.length; row += 1) {
+          for (let col = 0; col < newBoard.length; col += 1) {
+            if (newBoard[row][col].letter !== '') {
+              if (oldBoard[row][col].temp) {
+                // someone placed a letter over temp letter
+                this.tempRemove(row * GLOBAL.SMALL_BOARD_SIZE + col);
+              }
+              updatedBoard[row][col] = newBoard[row][col];
+            }
+          }
+        }
+        return { board: updatedBoard };
+      });
+    }
+  };
+
+  tempUpdate = (id, data) => {
+    const row = Math.floor(id / GLOBAL.SMALL_BOARD_SIZE);
+    const col = id % GLOBAL.SMALL_BOARD_SIZE;
+
+    this.setState(oldBoard => {
+      const updatedBoard = oldBoard.board;
+      updatedBoard[row][col] = data;
+      return { board: updatedBoard };
+    });
+  };
+
+  tempRemove = id => {
+    const row = Math.floor(id / GLOBAL.SMALL_BOARD_SIZE);
+    const col = id % GLOBAL.SMALL_BOARD_SIZE;
+    emit('requestLetter', {
+      name: this.state.name,
+      letter: this.state.board[row][col].letter,
+    });
+    this.setState(oldBoard => {
+      const updatedBoard = oldBoard.board;
+      updatedBoard[row][col].temp = false;
+      updatedBoard[row][col].letter = '';
+      return { board: updatedBoard };
+    });
+  };
 }
 
-const letterValues = {
-  BLANK: 0,
-  A: 1,
-  B: 3,
-  C: 3,
-  D: 2,
-  E: 1,
-  F: 4,
-  G: 2,
-  H: 4,
-  I: 1,
-  J: 8,
-  K: 5,
-  L: 1,
-  M: 3,
-  N: 1,
-  O: 1,
-  P: 3,
-  Q: 10,
-  R: 1,
-  S: 1,
-  T: 1,
-  U: 1,
-  V: 4,
-  W: 4,
-  X: 8,
-  Y: 4,
-  Z: 10,
+Gameboard.propTypes = {
+  name: PropTypes.string,
 };

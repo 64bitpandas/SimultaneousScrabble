@@ -13,6 +13,7 @@ import { Redirect } from 'react-router-dom';
 import ChatClient from '../../components/ChatClient';
 import Gameboard from '../../components/Gameboard';
 import Leaderboard from '../../components/Leaderboard';
+import Rack from '../../components/Rack';
 
 export default function GamePage(props) {
   if (props.location.state === undefined) {
@@ -28,7 +29,8 @@ export default function GamePage(props) {
         player={props.location.state.name}
         room={props.location.state.room}
       />
-      <Gameboard />
+      <Gameboard name={props.location.state.name} />
+      <Rack name={props.location.state.name} />
     </div>
   );
 }

@@ -9,6 +9,7 @@ require('colors');
  *    board: [[
  *      {
  *        id: number,
+ *        temp: boolean,
  *        letter?: string,
  *        modifier?: string,
  *        owner?: string,
@@ -96,7 +97,7 @@ const joinRoom = (player, room) => {
     name: player,
     score: 0,
     words: [],
-    letters: [],
+    letters: ['Q', 'W', 'E', 'R', 'T', 'Y'],
   };
 
   if (!data[room]) {
@@ -116,7 +117,13 @@ const generateBoard = (size, specials) => {
   for (let row = 0; row < size; row += 1) {
     board.push([]);
     for (let col = 0; col < size; col += 1) {
-      board[row].push({ id: row + col, letter: '', modifier: '', owner: '' });
+      board[row].push({
+        id: row * size + col,
+        temp: false,
+        letter: '',
+        modifier: '',
+        owner: '',
+      });
       Object.keys(specials).forEach(special => {
         if (
           specials[special].some(item => item[0] === row && item[1] === col)
@@ -130,6 +137,13 @@ const generateBoard = (size, specials) => {
 };
 
 const getData = room => data[room];
+const getPlayerData = (room, player) =>
+  data[room].players.find(pl => pl.name === player);
+const setLetters = (room, player, letters) => {
+  data[room].players.find(pl => pl.name === player).letters = letters;
+};
 
 exports.joinRoom = joinRoom;
 exports.getData = getData;
+exports.setLetters = setLetters;
+exports.getPlayerData = getPlayerData;

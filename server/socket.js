@@ -1,4 +1,4 @@
-const { joinRoom, getData } = require('./game');
+const { joinRoom, getData, setLetters, getPlayerData } = require('./game');
 
 /* eslint-disable no-console */
 
@@ -30,14 +30,29 @@ const setupSocket = i => {
         message: message.substring(0, 35),
       });
     });
+    socket.to(room).on('useLetter', data => {
+      setLetters(room, data.name, data.letters);
+      sendUpdateToPlayer(room);
+    });
+    socket.to(room).on('requestLetter', data => {
+      setLetters(room, data.name, [
+        ...getPlayerData(room, data.name).letters,
+        data.letter,
+      ]);
+      sendUpdateToPlayer(room);
+    });
     socket.to(room).on('forceUpdate', () => {
-      sendUpdate(room, getData(room));
+      sendUpdateToPlayer(room);
     });
   });
 };
 
 const sendUpdate = (room, data) => {
   io.in(room).emit('serverSendUpdate', data);
+};
+
+const sendUpdateToPlayer = room => {
+  socket.emit('serverSendUpdate', getData(room));
 };
 
 exports.setupSocket = setupSocket;
