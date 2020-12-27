@@ -16,9 +16,11 @@ const GlobalStyle = createGlobalStyle`
   }
 
   #app {
-    background-color: #fafafa;
-    min-height: 100%;
-    min-width: 100%;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 
   p,

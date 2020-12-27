@@ -45,6 +45,6 @@ export function registerChat(c) {
 export function registerLeaderboard(board) {
   leaderboard = board;
 }
-export function registeGameboard(board) {
+export function registerGameboard(board) {
   gameboard = board;
 }

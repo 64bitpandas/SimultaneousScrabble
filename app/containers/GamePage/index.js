@@ -11,6 +11,7 @@ import { Redirect } from 'react-router-dom';
 // import { FormattedMessage } from 'react-intl';
 // import messages from './messages';
 import ChatClient from '../../components/ChatClient';
+import Gameboard from '../../components/Gameboard';
 import Leaderboard from '../../components/Leaderboard';
 
 export default function GamePage(props) {
@@ -27,6 +28,7 @@ export default function GamePage(props) {
         player={props.location.state.name}
         room={props.location.state.room}
       />
+      <Gameboard />
     </div>
   );
 }

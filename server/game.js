@@ -8,16 +8,19 @@ require('colors');
  * roomname: string {
  *    board: [[
  *      {
+ *        id: number,
  *        letter?: string,
  *        modifier?: string,
  *        owner?: string,
+ *        color?: string,
  *      }
  *    ]]
  *    players: [
  *      {
  *        name: string,
  *        score: number,
- *        words: [string array]
+ *        words: [string array],
+ *        letters: [string array],
  *      }
  *    ]
  * }
@@ -26,7 +29,7 @@ const data = {};
 
 const SIZE = 15;
 const SPECIALS = {
-  TW: [[0, 0], [0, 7], [0, 14], [7, 0], [7, 7], [7, 14]],
+  TW: [[0, 0], [0, 7], [0, 14], [7, 0], [7, 14], [14, 0], [14, 7], [14, 14]],
   DW: [
     [1, 1],
     [2, 2],
@@ -54,40 +57,56 @@ const SPECIALS = {
     [11, 0],
     [3, 14],
     [11, 14],
+    [6, 2],
     [7, 3],
-    [8, 4],
-    [9, 3],
+    [8, 2],
+    [2, 6],
     [3, 7],
-    [4, 8],
-    [7, 3],
-    [12, 7],
-    [11, 8],
-    [12, 9],
-    [7, 12],
-    [8, 11],
-    [9, 12],
+    [2, 8],
+    [6, 12],
+    [7, 11],
+    [8, 12],
+    [12, 6],
+    [11, 7],
+    [12, 8],
+    [6, 6],
+    [6, 8],
+    [8, 6],
+    [8, 8],
   ],
+  TL: [
+    [5, 1],
+    [9, 1],
+    [1, 5],
+    [1, 9],
+    [13, 5],
+    [13, 9],
+    [9, 13],
+    [5, 13],
+    [5, 9],
+    [5, 5],
+    [9, 9],
+    [9, 5],
+  ],
+  CENTER: [7, 7],
 };
 
 const joinRoom = (player, room) => {
+  const defaultPlayer = {
+    name: player,
+    score: 0,
+    words: [],
+    letters: [],
+  };
+
   if (!data[room]) {
     data[room] = {
       board: generateBoard(SIZE, SPECIALS),
-      players: [
-        {
-          name: player,
-          score: 0,
-          words: [],
-        },
-      ],
+      players: [defaultPlayer],
     };
     console.log(`New room created: ${room}`.cyan);
   } else {
-    data[room].players.push({
-      name: player,
-      score: 0,
-      words: [],
-    });
+    data[room].players.push(defaultPlayer);
   }
   socket.sendUpdate(room, data[room]);
 };
@@ -97,7 +116,7 @@ const generateBoard = (size, specials) => {
   for (let row = 0; row < size; row += 1) {
     board.push([]);
     for (let col = 0; col < size; col += 1) {
-      board[row].push({ letter: '', modifier: '', owner: '' });
+      board[row].push({ id: row + col, letter: '', modifier: '', owner: '' });
       Object.keys(specials).forEach(special => {
         if (
           specials[special].some(item => item[0] === row && item[1] === col)

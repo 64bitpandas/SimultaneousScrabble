@@ -1,0 +1,32 @@
+#gameboard {
+  display: grid;
+  grid-template-columns: repeat(15, 3.5vw);
+  grid-template-rows: repeat(15, 3.5vw);
+  margin-left: 2vw;
+  margin-right: 2vw;
+}
+
+.square {
+ background-color: gray;
+ border: solid black 1px;
+}
+
+.square.TW {
+  background-color: red;
+}
+
+.square.DW {
+  background-color: orange;
+}
+
+.square.TL {
+  background-color: blue;
+}
+
+.square.DL {
+  background-color: green;
+}
+
+.square.CENTER {
+  background-color: pink;
+}
