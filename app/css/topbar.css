@@ -1,0 +1,30 @@
+#topbar {
+  background-color: #ff8da1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  align-items: center;
+}
+
+#topbar h1 {
+  margin: 0;
+}
+
+#timer {
+  align-content: center;
+}
+
+.leave-btn {
+  align-content: right;
+  background-color: #fa5b79;
+  text-decoration: none;
+  height: 3vh;
+  width: 50%;
+  text-align: center;
+  padding: 0.5vh;
+  color: black;
+}

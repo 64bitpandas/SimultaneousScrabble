@@ -1,4 +1,10 @@
-const { joinRoom, getData, setLetters, getPlayerData } = require('./game');
+const {
+  joinRoom,
+  getData,
+  setLetters,
+  getPlayerData,
+  deletePlayer,
+} = require('./game');
 
 /* eslint-disable no-console */
 
@@ -43,6 +49,10 @@ const setupSocket = i => {
     });
     socket.to(room).on('forceUpdate', () => {
       sendUpdateToPlayer(room);
+    });
+    socket.on('disconnect', () => {
+      console.log(`${name} has left ${room}`.yellow);
+      deletePlayer(name, room);
     });
   });
 };

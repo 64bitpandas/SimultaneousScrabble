@@ -38,8 +38,8 @@ const FilledSquare = ({ letter, id }) => {
       isDragging: !!monitor.isDragging(),
       opacity: 0.9,
     }),
-    end: () => {
-      getGameboard().tempRemove(id);
+    end: (item, monitor) => {
+      getGameboard().tempRemove(id, !monitor.didDrop());
     },
   });
   return squareHTML(letter, 'red', drag);

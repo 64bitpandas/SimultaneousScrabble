@@ -50,7 +50,7 @@ export default class ChatClient extends Component {
         type="text"
         className="chat-input"
         placeholder="Chat here..."
-        maxLength="50"
+        maxLength="100"
         spellCheck="false"
         onKeyDown={this.sendChat}
       />
@@ -142,6 +142,10 @@ export default class ChatClient extends Component {
   //     me ? 'me' : 'friend',
   //   );
   // }
+
+  addAnnouncement = msg => {
+    this.appendMessage(msg, 'announcement');
+  };
 
   // Message to notify players when a new player joins
   addLoginMessage = (name, me) => {

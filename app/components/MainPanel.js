@@ -14,7 +14,8 @@ export default class MainPanel extends Component {
 
   render = () => (
     <div id="main-panel">
-      <h2>Create a Game</h2>
+      <h1>Simultaneous Scrabble</h1>
+      <h2>Join a Game</h2>
       <input
         className="menuInputBox box"
         type="text"

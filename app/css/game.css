@@ -1,0 +1,9 @@
+#game {
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(2, auto);
+  overflow: hidden;
+  grid-auto-flow: row;
+  margin-top: 5vh;
+  max-height: 95vh;
+}

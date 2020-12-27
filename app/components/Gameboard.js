@@ -56,13 +56,15 @@ export default class Gameboard extends Component {
     });
   };
 
-  tempRemove = id => {
+  tempRemove = (id, requestLetter) => {
     const row = Math.floor(id / GLOBAL.SMALL_BOARD_SIZE);
     const col = id % GLOBAL.SMALL_BOARD_SIZE;
-    emit('requestLetter', {
-      name: this.state.name,
-      letter: this.state.board[row][col].letter,
-    });
+    if (requestLetter) {
+      emit('requestLetter', {
+        name: this.state.name,
+        letter: this.state.board[row][col].letter,
+      });
+    }
     this.setState(oldBoard => {
       const updatedBoard = oldBoard.board;
       updatedBoard[row][col].temp = false;

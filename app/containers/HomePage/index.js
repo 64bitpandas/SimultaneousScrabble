@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /*
  * HomePage
  *
@@ -10,10 +11,20 @@ import React from 'react';
 // import messages from './messages';
 import MainPanel from '../../components/MainPanel';
 
-export default function HomePage() {
+export default function HomePage(props) {
+  if (props.location.state === undefined) {
+    return (
+      <div id="container">
+        <MainPanel />
+      </div>
+    );
+  }
   return (
     <div id="container">
-      <MainPanel />
+      <MainPanel
+        name={props.location.state.name}
+        room={props.location.state.room}
+      />
     </div>
   );
 }

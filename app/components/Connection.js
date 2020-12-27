@@ -60,3 +60,7 @@ export function registerRack(thisRack) {
 export function getGameboard() {
   return gameboard;
 }
+export function quitGame() {
+  chat.addAnnouncement(`${chat.state.player} has left the game`);
+  socket.disconnect();
+}

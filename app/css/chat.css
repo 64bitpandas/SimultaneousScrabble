@@ -4,12 +4,11 @@
  * ************************** */
 
 .chatbox {
-  width: 40vw;
-  height: 70vh;
-  top: 2rem;
-  right: 2rem;
+  width: 95%;
+  height: 90%;
+  min-width: 35vw;
+  max-height: 70vh;
   padding: 1.2rem;
-  position: absolute;
   border: solid gray 2px;
 }
 
@@ -18,7 +17,7 @@
   margin: 0;
   list-style: none;
   box-sizing: border-box;
-  height: 63vh;
+  height: 95%;
   overflow-wrap: break-word;
   overflow-y: scroll;
 }
@@ -32,13 +31,13 @@
   color: #1b47e5;
 }
 
-.chatbox .chat-list li.system {
+.chatbox .chat-list li.announcement {
   color: #9b59b6;
 }
 
-.chatbox .chat-list li.system:before {
+/* .chatbox .chat-list li.system:before {
   content: "» ";
-}
+} */
 
 .chatbox .chat-input {
   pointer-events: all;

@@ -3,6 +3,7 @@
   grid-template-columns: repeat(15, min(5vh, 3.5vw));
   grid-template-rows: repeat(15, min(5vh, 3.5vw));
   margin: 3vw;
+  max-height: 70vh;
 }
 
 .square {

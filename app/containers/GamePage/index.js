@@ -14,23 +14,31 @@ import ChatClient from '../../components/ChatClient';
 import Gameboard from '../../components/Gameboard';
 import Leaderboard from '../../components/Leaderboard';
 import Rack from '../../components/Rack';
+import Topbar from '../../components/Topbar';
+import '../../css/game.css';
 
 export default function GamePage(props) {
   if (props.location.state === undefined) {
     return <Redirect to="/" />;
   }
   return (
-    <div>
-      <ChatClient
+    <>
+      <Topbar
         player={props.location.state.name}
         room={props.location.state.room}
       />
-      <Leaderboard
-        player={props.location.state.name}
-        room={props.location.state.room}
-      />
-      <Gameboard name={props.location.state.name} />
-      <Rack name={props.location.state.name} />
-    </div>
+      <div id="game">
+        <Gameboard name={props.location.state.name} />
+        <ChatClient
+          player={props.location.state.name}
+          room={props.location.state.room}
+        />
+        <Rack name={props.location.state.name} />
+        <Leaderboard
+          player={props.location.state.name}
+          room={props.location.state.room}
+        />
+      </div>
+    </>
   );
 }

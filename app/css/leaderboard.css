@@ -1,7 +1,8 @@
 #leaderboard {
-  position: absolute;
-  width: 40vw;
-  height: 25vh;
-  right: 2rem;
-  bottom: 2rem;
+  width: 95%;
+  height: 90%;
+}
+
+#leaderboard h2 {
+  margin: 0 !important;
 }

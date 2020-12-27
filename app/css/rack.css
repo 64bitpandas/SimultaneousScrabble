@@ -1,7 +1,7 @@
 #rack {
   display: grid;
   grid-template-columns: repeat(7, 5vw);
-  margin: 3vw;
+  margin-left: 3vw;
 }
 
 .rack-letter {
