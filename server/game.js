@@ -204,8 +204,10 @@ const gameLoop = room =>
         data[room].players.forEach((player, index) => {
           data[room].players[index].loseTurn = false;
         });
+        data[room].players.sort((a, b) => b.score - a.score);
       } else if (data[room].status === 'challenging') {
         data[room].status = 'playing';
+        let notGameOver = false;
         for (let i = 0; i < data[room].players.length; i += 1) {
           const player = data[room].players[i];
           data[room].players[i].letters.push(...drawTiles(room, player));
@@ -227,18 +229,37 @@ const gameLoop = room =>
               }
             }
           });
-        }
-        for (let row = 0; row < data[room].board.length; row += 1) {
-          for (let col = 0; col < data[room].board.length; col += 1) {
-            data[room].board[row][col].challengable = false;
+          if (data[room].players[i].letters.length > 0) {
+            notGameOver = true;
           }
         }
-        socket.sendGlobalAnnouncement(
-          room,
-          `Round ${data[room].round} begins.`,
-          'blue',
+
+        data[room].players.sort((a, b) => b.score - a.score);
+        console.log(
+          `Tiles remaining in ${room}: ${data[room].bag.length}`.blue,
         );
-        data[room].time = 60;
+
+        if (!notGameOver) {
+          data[room].status = 'gameOver';
+          socket.sendGlobalAnnouncement(
+            room,
+            `Game over! ${data[room].players[0].name} wins with ${
+              data[room].players[0].score
+            } points!`,
+          );
+        } else {
+          socket.sendGlobalAnnouncement(
+            room,
+            `Round ${data[room].round} begins.`,
+            'blue',
+          );
+          data[room].time = 60;
+        }
+        // for (let row = 0; row < data[room].board.length; row += 1) {
+        //   for (let col = 0; col < data[room].board.length; col += 1) {
+        //     data[room].board[row][col].challengable = false;
+        //   }
+        // }
       }
     }
     socket.sendUpdate(room, data[room]);
