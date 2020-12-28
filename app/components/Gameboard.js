@@ -20,7 +20,9 @@ export default class Gameboard extends Component {
 
   renderBoard = () =>
     this.state.board.map(row =>
-      row.map(square => <BoardSquare key={square.id} space={square} />),
+      row.map(square => (
+        <BoardSquare key={square.id} space={square} name={this.state.name} />
+      )),
     );
 
   updateBoard = newBoard => {
@@ -28,13 +30,17 @@ export default class Gameboard extends Component {
       this.setState({ board: newBoard });
     } else {
       this.setState(oldBoard => {
-        const updatedBoard = oldBoard.board;
+        const updatedBoard = Object.assign([], oldBoard.board);
+
         for (let row = 0; row < newBoard.length; row += 1) {
           for (let col = 0; col < newBoard.length; col += 1) {
             if (newBoard[row][col].letter !== '') {
-              if (oldBoard[row][col].temp) {
+              if (
+                oldBoard.board[row][col].temp &&
+                newBoard[row][col].owner !== oldBoard.board[row][col].owner
+              ) {
                 // someone placed a letter over temp letter
-                this.tempRemove(row * GLOBAL.SMALL_BOARD_SIZE + col);
+                this.tempRemove(row * GLOBAL.SMALL_BOARD_SIZE + col, true);
               }
               updatedBoard[row][col] = newBoard[row][col];
             }

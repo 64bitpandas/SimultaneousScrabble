@@ -1,7 +1,7 @@
 #rack {
   display: grid;
   grid-template-columns: repeat(7, 5vw);
-  margin-left: 3vw;
+  justify-content: center;
 }
 
 .rack-letter {
@@ -11,4 +11,28 @@
   margin: 3px;
   padding: 1px;
   font-size: 200%;
+}
+
+#rack-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  align-items: left;
+  justify-content: center;
+}
+
+.rack-btn {
+  height: 3vh;
+  width: 10vw;
+  margin-left: 5vh;
+  margin-right: 5vh;
+  text-align: center;
+  margin-top: 1vh;
+}
+
+.submit {
+  background-color: lightgreen;
+}
+
+.recall {
+  background-color: lightcoral;
 }

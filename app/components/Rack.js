@@ -2,7 +2,7 @@ import '../css/rack.css';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { useDrag } from 'react-dnd';
-import { emit, registerRack } from './Connection';
+import { emit, registerRack, submit } from './Connection';
 import { GLOBAL } from './GLOBAL';
 
 export default class Rack extends Component {
@@ -27,7 +27,22 @@ export default class Rack extends Component {
       />
     ));
 
-    return <div id="rack">{renderRack}</div>;
+    return (
+      <div>
+        <div id="rack">{renderRack}</div>
+        <div id="rack-buttons">
+          <button
+            className="rack-btn submit"
+            onClick={submit}
+            onKeyDown={submit}
+            type="button"
+          >
+            Submit
+          </button>
+          <div className="rack-btn recall">Reset Rack</div>
+        </div>
+      </div>
+    );
   };
 }
 

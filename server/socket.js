@@ -4,6 +4,7 @@ const {
   setLetters,
   getPlayerData,
   deletePlayer,
+  validateBoard,
 } = require('./game');
 
 const dictionary = require('./data/dictionary.json');
@@ -68,6 +69,9 @@ const setupSocket = i => {
         });
       }
     });
+    socket.on('submit', data => {
+      validateBoard(data.board, name, room);
+    });
     socket.to(room).on('forceUpdate', () => {
       sendUpdateToPlayer(room);
     });
@@ -89,6 +93,20 @@ const sendUpdate = (room, data) => {
 const sendUpdateToPlayer = room => {
   socket.emit('serverSendUpdate', getData(room));
 };
+const sendError = err => {
+  socket.emit('serverSendAnnouncement', {
+    msg: err,
+    color: 'red',
+  });
+};
+const sendAnnouncement = message => {
+  socket.emit('serverSendAnnouncement', {
+    msg: message,
+    color: 'purple',
+  });
+};
 
 exports.setupSocket = setupSocket;
 exports.sendUpdate = sendUpdate;
+exports.sendError = sendError;
+exports.sendAnnouncement = sendAnnouncement;

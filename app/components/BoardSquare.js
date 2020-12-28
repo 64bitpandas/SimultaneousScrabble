@@ -5,7 +5,7 @@ import '../css/gameboard.css';
 import { getGameboard } from './Connection';
 import { GLOBAL } from './GLOBAL';
 
-export const BoardSquare = ({ space }) => {
+export const BoardSquare = ({ space, name }) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: GLOBAL.TILE,
     canDrop: () => space.letter === '',
@@ -15,6 +15,7 @@ export const BoardSquare = ({ space }) => {
         temp: true,
         letter: item.letter,
         modifier: space.modifier,
+        owner: name,
       }),
     collect: monitor => ({
       isOver: !!monitor.isOver(),
@@ -58,4 +59,5 @@ const squareHTML = (letter, color, ref) => (
 
 BoardSquare.propTypes = {
   space: PropTypes.object,
+  name: PropTypes.string,
 };

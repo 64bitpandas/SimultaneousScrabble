@@ -21,6 +21,4 @@ By default, the frontend is served to `localhost:3000` and the backend listens t
 
 Created by [Ben Cuan](https://bencuan.me) using Node.js, Express, Socket.io, React
 
-Definition lookups courtesy of [Webster's Unabridged English Dictionary, converted to JSON](https://github.com/matthewreagan/WebstersEnglishDictionary).
-
-The Scrabble dictionary currently implemented is [TWL](https://www.wordgamedictionary.com/twl06/download/twl06.txt). Future updates may allow use of other common dictionaries.
+Definition lookups and wordlist are accredited to [jscrab](https://github.com/amnond/jscrab/tree/master/lang).

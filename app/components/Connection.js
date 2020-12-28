@@ -63,6 +63,11 @@ export function registerRack(thisRack) {
 export function getGameboard() {
   return gameboard;
 }
+export function submit() {
+  socket.emit('submit', {
+    board: gameboard.state.board,
+  });
+}
 export function quitGame() {
   chat.appendMessage(`${chat.state.player} has left the game`, 'purple');
   socket.disconnect();
