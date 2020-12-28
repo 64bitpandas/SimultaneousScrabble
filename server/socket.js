@@ -54,12 +54,14 @@ const setupSocket = i => {
       const cleanedWord = data.word.trim().toLowerCase();
       if (dictionary[cleanedWord]) {
         sendAnnouncement(
+          s,
           `The definition of ${cleanedWord.toUpperCase()} is: ${
             dictionary[cleanedWord]
           }`,
         );
       } else {
         sendAnnouncement(
+          s,
           `Sorry, no definition was found for ${cleanedWord.toUpperCase()}`,
         );
       }

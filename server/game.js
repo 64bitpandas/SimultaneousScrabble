@@ -20,6 +20,7 @@ require('colors');
  *        modifier?: string,
  *        owner?: string,
  *        color?: string,
+ *        used: boolean,
  *      }
  *    ]]
  *    players: [
@@ -46,27 +47,27 @@ const loops = {};
 const SIZE = 15;
 
 const LETTERS = {
-  A: [1, 10],
-  B: [4, 2],
-  C: [4, 2],
-  D: [2, 5],
+  A: [1, 9],
+  B: [3, 2],
+  C: [3, 2],
+  D: [2, 4],
   E: [1, 12],
   F: [4, 2],
-  G: [3, 3],
-  H: [4, 3],
+  G: [2, 3],
+  H: [4, 2],
   I: [1, 9],
-  J: [10, 1],
+  J: [8, 1],
   K: [5, 1],
   L: [1, 4],
   M: [3, 2],
   N: [1, 6],
-  O: [1, 7],
-  P: [4, 2],
+  O: [1, 8],
+  P: [3, 2],
   Q: [10, 1],
   R: [1, 6],
-  S: [1, 5],
-  T: [1, 7],
-  U: [2, 4],
+  S: [1, 4],
+  T: [1, 6],
+  U: [1, 4],
   V: [4, 2],
   W: [4, 2],
   X: [8, 1],
@@ -212,7 +213,10 @@ const gameLoop = room =>
           data[room].players[i].words.forEach((word, index) => {
             if (player.words[index].challengable) {
               data[room].players[i].words[index].challengable = false;
-              if (twl[player.words[index].word.toLowerCase()] === undefined) {
+              if (
+                !player.words[index].word.includes('*') &&
+                twl[player.words[index].word.toLowerCase()] === undefined
+              ) {
                 socket.sendGlobalAnnouncement(
                   room,
                   `${player.name} played an illegal word ${
@@ -266,6 +270,7 @@ const generateBoard = (size, specials) => {
         letter: '',
         modifier: '',
         owner: '',
+        used: false,
       });
       Object.keys(specials).forEach(special => {
         if (
@@ -355,6 +360,8 @@ const validateBoard = (board, player, room) => {
 
   const [newBoard, words] = generateWords(board, rowToUse, colToUse, []);
 
+  if (!newBoard) return false;
+
   // make sure pieces are together
   for (let row = 0; row < newBoard.length; row += 1) {
     for (let col = 0; col < newBoard.length; col += 1) {
@@ -362,10 +369,9 @@ const validateBoard = (board, player, room) => {
         socket.sendError(`Tiles must all be placed in a line.`);
         return false;
       }
+      newBoard[row][col].used = true;
     }
   }
-
-  if (!newBoard) return false;
 
   if (words.length === 0) {
     socket.sendError(`Place more than one piece at the center.`);
@@ -445,7 +451,6 @@ const generateWords = (board, row, col, visited) => {
 
   const processChild = (r, c) => {
     if (board[r][c].temp) {
-      console.log(JSON.stringify(board[r][c]));
       const [childBoard, childWords] = generateWords(
         newBoard,
         r,
@@ -460,16 +465,22 @@ const generateWords = (board, row, col, visited) => {
   };
 
   const getPts = (r, c, horiz) => {
-    const pts = board[r][c].letter === '*' ? 0 : LETTERS[board[r][c].letter][0];
-    if (!board[r][c].temp) return pts;
+    let pts = board[r][c].letter === '*' ? 0 : LETTERS[board[r][c].letter][0];
+    if (board[r][c].used) {
+      // console.log(`${board[r][c].letter} was worth ${pts} points USED`);
+      return pts;
+    }
     if (board[r][c].modifier === 'DW' || board[r][c].modifier === 'CENTER') {
       if (horiz) horizMult *= 2;
       else vertMult *= 2;
     } else if (board[r][c].modifier === 'TW') {
       if (horiz) horizMult *= 3;
       else vertMult *= 3;
-    } else if (board[r][c].modifier === 'DL') return pts * 2;
-    else if (board[r][c].modifier === 'TL') return pts * 3;
+    } else if (board[r][c].modifier === 'DL') pts *= 2;
+    else if (board[r][c].modifier === 'TL') pts *= 3;
+    // console.log(
+    //   `${board[r][c].letter} was worth ${pts} points. ${board[r][c].modifier}`,
+    // );
     return pts;
   };
 
@@ -488,13 +499,13 @@ const generateWords = (board, row, col, visited) => {
   newBoard[row][col].challengable = true;
   newVisited.push(id(row, col));
 
-  console.log(
-    `${board[row][col].letter}, ${board[row + 1][col].letter}, ${
-      board[row - 1][col].letter
-    }, ${board[row][col + 1].letter}, ${board[row][col - 1].letter}`,
-  );
+  // console.log(
+  //   `${board[row][col].letter}, ${board[row + 1][col].letter}, ${
+  //     board[row - 1][col].letter
+  //   }, ${board[row][col + 1].letter}, ${board[row][col - 1].letter}`,
+  // );
   // Traverse horizontally
-  if (board[row + 1][col].letter !== '') {
+  if (row < board.length - 1 && board[row + 1][col].letter !== '') {
     let r = row;
     lock = 'H+';
     while (r < board.length && board[r][col].letter !== '') {
@@ -510,7 +521,7 @@ const generateWords = (board, row, col, visited) => {
     }
   }
 
-  if (board[row - 1][col].letter !== '') {
+  if (row > 0 && board[row - 1][col].letter !== '') {
     let r = row;
     if (lock === 'H+') r -= 1;
     while (r >= 0 && board[r][col].letter !== '') {
@@ -526,8 +537,7 @@ const generateWords = (board, row, col, visited) => {
     }
   }
   // Traverse vertically
-  if (board[row][col + 1].letter !== '') {
-    console.log('V+');
+  if (col < board.length - 1 && board[row][col + 1].letter !== '') {
     lock = 'V+';
     let c = col;
     while (c < board.length && board[row][c].letter !== '') {
@@ -542,8 +552,7 @@ const generateWords = (board, row, col, visited) => {
       c += 1;
     }
   }
-  if (board[row][col - 1].letter !== '') {
-    console.log('V-');
+  if (col > 0 && board[row][col - 1].letter !== '') {
     let c = col;
     if (lock === 'V+') c -= 1;
     while (c >= 0 && board[row][c].letter !== '') {
@@ -558,7 +567,6 @@ const generateWords = (board, row, col, visited) => {
       c -= 1;
     }
   }
-  console.log(JSON.stringify(recursiveQueue));
   recursiveQueue.forEach(item => {
     processChild(item[0], item[1]);
   });
@@ -593,7 +601,10 @@ const challenge = (room, you, them) => {
   getPlayerData(room, them).words.map(word => {
     if (word.challengable) {
       const newWord = word;
-      if (twl[word.word.toLowerCase()] === undefined) {
+      if (
+        !word.word.includes('*') &&
+        twl[word.word.toLowerCase()] === undefined
+      ) {
         addToPlayerData(room, them, 'score', -word.points);
         socket.sendGlobalAnnouncement(
           room,
