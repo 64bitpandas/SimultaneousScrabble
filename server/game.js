@@ -317,7 +317,7 @@ const generateBag = letters => {
   return bagString;
 };
 
-const validateBoard = (board, player, room) => {
+const validateBoard = (s, board, player, room) => {
   if (data[room].ready.includes(player) || data[room].status !== 'playing') {
     socket.sendError(`You cannot submit at this time.`);
     return false;
@@ -342,11 +342,11 @@ const validateBoard = (board, player, room) => {
           rowToUse = row;
           colToUse = col;
           if (!checkInLine(board, row, col)) {
-            socket.sendError(`Tiles must all be placed in a line.`);
+            socket.sendError(s, `Tiles must all be placed in a line.`);
             return false;
           }
-        } else {
-          socket.sendError(`All pieces must be connected.`);
+        } else if (row < 14) {
+          socket.sendError(s, `All pieces must be connected.`);
           return false;
         }
       }
@@ -403,7 +403,7 @@ const generateConnected = (board, row, col, visited) => {
   if (visited.includes(id(row, col))) {
     return [];
   }
-  if (row > board.length || row < 0 || col > board.length || col < 0) {
+  if (row >= board.length || row < 0 || col >= board.length || col < 0) {
     return [];
   }
   if (board[row][col].letter === '') {
@@ -588,11 +588,9 @@ const generateWords = (board, row, col, visited) => {
 };
 
 const setReady = (room, player) => {
-  if (
-    // data[room].status === 'challenging' &&
-    !data[room].ready.includes(player)
-  ) {
+  if (!data[room].ready.includes(player)) {
     data[room].ready.push(player);
+    socket.sendGlobalAnnouncement(room, `${player} is ready!`, 'green');
   }
 };
 

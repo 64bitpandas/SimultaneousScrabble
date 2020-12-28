@@ -67,7 +67,7 @@ const setupSocket = i => {
       }
     });
     s.on('submit', data => {
-      game.validateBoard(data.board, name, room);
+      game.validateBoard(s, data.board, name, room);
     });
     s.on('startGame', () => {
       if (game.getData(room).status !== 'waiting') {

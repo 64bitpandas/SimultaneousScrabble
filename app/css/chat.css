@@ -41,6 +41,9 @@
 .chatbox .chat-list li.orange {
   color: #faaa50;
 }
+.chatbox .chat-list li.green {
+  color: #49b800;
+}
 
 /* .chatbox .chat-list li.system:before {
   content: "» ";
