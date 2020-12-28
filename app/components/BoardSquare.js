@@ -5,10 +5,10 @@ import '../css/gameboard.css';
 import { getGameboard } from './Connection';
 import { GLOBAL } from './GLOBAL';
 
-export const BoardSquare = ({ space, name }) => {
+export const BoardSquare = ({ space, name, canPlace }) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: GLOBAL.TILE,
-    canDrop: () => space.letter === '',
+    canDrop: () => canPlace && space.letter === '',
     drop: item =>
       getGameboard().tempUpdate(space.id, {
         id: space.id,
@@ -60,4 +60,5 @@ const squareHTML = (letter, color, ref) => (
 BoardSquare.propTypes = {
   space: PropTypes.object,
   name: PropTypes.string,
+  canPlace: PropTypes.bool,
 };

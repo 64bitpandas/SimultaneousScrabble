@@ -7,6 +7,11 @@ require('colors');
 /**
  * The data object contains information about all currently active rooms.
  * roomname: string {
+ *    status: waiting/playing/challenging,
+ *    time: number (seconds),
+ *    bag: string,
+ *    ready: [string array],
+ *    round: number,
  *    board: [[
  *      {
  *        id: number,
@@ -28,6 +33,10 @@ require('colors');
  * }
  */
 const data = {};
+
+// Stores the game loop interval objects for each active room.
+// Destroy the interval when the game ends.
+const loops = {};
 
 const SIZE = 15;
 
@@ -129,19 +138,91 @@ const joinRoom = (player, room) => {
     name: player,
     score: 0,
     words: [],
-    letters: ['Q', 'W', 'E', 'R', 'T', 'Y'],
+    letters: [],
   };
 
   if (!data[room]) {
     data[room] = {
       board: generateBoard(SIZE, SPECIALS),
       players: [defaultPlayer],
+      status: 'waiting',
+      time: 0,
+      bag: generateBag(LETTERS),
+      ready: [],
+      round: 1,
     };
     console.log(`New room created: ${room}`.cyan);
-  } else {
+  } else if (data[room].status === 'waiting') {
     data[room].players.push(defaultPlayer);
+  } else {
+    socket.emit('serverSendJoinError', {
+      error: 'Error: game already started',
+    });
   }
   socket.sendUpdate(room, data[room]);
+};
+
+const startGame = room => {
+  for (let i = 0; i < data[room].players.length; i += 1) {
+    const player = data[room].players[i];
+    data[room].players[i].letters.push(...drawTiles(room, player));
+  }
+  data[room].status = 'playing';
+  data[room].time = 60;
+  console.log(`The game in room ${room} has started!`.magenta);
+  socket.sendGlobalAnnouncement(room, `Round 1 begins.`, 'blue');
+  socket.sendUpdate(room, data[room]);
+  loops[room] = gameLoop(room);
+};
+
+const gameLoop = room =>
+  setInterval(() => {
+    data[room].time -= 1;
+
+    if (
+      data[room].time === 0 ||
+      data[room].ready.length === data[room].players.length
+    ) {
+      data[room].ready = [];
+      if (data[room].status === 'playing') {
+        data[room].status = 'challenging';
+        socket.sendGlobalAnnouncement(
+          room,
+          `Round ${data[room].round} has ended. Press ready to continue.`,
+          'blue',
+        );
+        data[room].time = 30;
+        data[room].round += 1;
+      } else if (data[room].status === 'challenging') {
+        data[room].status = 'playing';
+        socket.sendGlobalAnnouncement(
+          room,
+          `Round ${data[room].round} begins.`,
+          'blue',
+        );
+        for (let i = 0; i < data[room].players.length; i += 1) {
+          const player = data[room].players[i];
+          data[room].players[i].letters.push(...drawTiles(room, player));
+        }
+        data[room].time = 60;
+      }
+    }
+    socket.sendUpdate(room, data[room]);
+  }, 1000);
+
+const drawTiles = (room, player) => {
+  const numToDraw = 7 - player.letters.length;
+  const tiles = [];
+  for (let i = 0; i < numToDraw; i += 1) {
+    if (data[room].bag.length === 0) return tiles;
+    const tile = Math.floor(Math.random() * data[room].bag.length);
+    tiles.push(data[room].bag.substring(tile, tile + 1));
+    data[room].bag =
+      data[room].bag.substring(0, tile) +
+      data[room].bag.substring(tile + 1, data[room].bag.length);
+  }
+
+  return tiles;
 };
 
 const generateBoard = (size, specials) => {
@@ -191,7 +272,22 @@ const isWord = word => {
   return twl[cleanedWord];
 };
 
+const generateBag = letters => {
+  let bagString = '';
+  Object.keys(letters).forEach(letter => {
+    for (let i = 0; i < letters[letter][1]; i += 1) {
+      bagString += letter === 'BLANK' ? '*' : letter;
+    }
+  });
+  return bagString;
+};
+
 const validateBoard = (board, player, room) => {
+  if (data[room].ready.includes(player) || data[room].status !== 'playing') {
+    socket.sendError(`You cannot submit at this time.`);
+    return false;
+  }
+
   const size = board.length;
   const center = Math.floor(size / 2);
   // check if center is filled
@@ -248,14 +344,18 @@ const validateBoard = (board, player, room) => {
 
   words.forEach(word => {
     console.log(`${player} played ${word.word} for ${word.points} points`.cyan);
-    socket.sendAnnouncement(
+    socket.sendGlobalAnnouncement(
+      room,
       `${player} played ${word.word} for ${word.points} points`,
+      'purple',
     );
     addToPlayerData(room, player, 'score', word.points);
   });
 
+  // A successful submission!
   addToPlayerData(room, player, 'words', words);
   data[room].board = newBoard;
+  data[room].ready.push(player);
   socket.sendUpdate(room, data[room]);
   return true;
 };
@@ -287,7 +387,7 @@ const checkInLine = (board, row, col) => {
     if (board[r][col].temp && r !== row) lock = 'row';
   }
   for (let c = 0; c < board.length; c += 1) {
-    if (board[row][c].temp && c !== row) {
+    if (board[row][c].temp && c !== col) {
       if (lock === 'row') {
         return false;
       }
@@ -329,7 +429,8 @@ const generateWords = (board, row, col, visited) => {
   };
 
   const getPts = (r, c, horiz) => {
-    const pts = LETTERS[board[r][c].letter][0];
+    const pts = board[r][c].letter === '*' ? 0 : LETTERS[board[r][c].letter][0];
+    if (!board[r][c].temp) return pts;
     if (board[r][c].modifier === 'DW' || board[r][c].modifier === 'CENTER') {
       if (horiz) horizMult *= 2;
       else vertMult *= 2;
@@ -445,10 +546,21 @@ const generateWords = (board, row, col, visited) => {
   return [newBoard, words];
 };
 
+const setReady = (room, player) => {
+  if (
+    data[room].status === 'challenging' &&
+    !data[room].ready.includes(player)
+  ) {
+    data[room].ready.push(player);
+  }
+};
+
 exports.joinRoom = joinRoom;
 exports.getData = getData;
 exports.setLetters = setLetters;
 exports.getPlayerData = getPlayerData;
+exports.setReady = setReady;
 exports.deletePlayer = deletePlayer;
 exports.isWord = isWord;
 exports.validateBoard = validateBoard;
+exports.startGame = startGame;

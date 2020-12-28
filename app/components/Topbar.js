@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../css/topbar.css';
-import { beginConnection, quitGame } from './Connection';
+import { emit, quitGame, registerTopbar } from './Connection';
 
 export default class Topbar extends Component {
   constructor(props) {
@@ -12,14 +12,22 @@ export default class Topbar extends Component {
       room: props.room,
       name: props.name,
     };
+    registerTopbar(this);
   }
 
   render = () => (
     <div id="topbar">
       <h1>Simultaneous Scrabble</h1>
       <div id="timer">{this.formattedTime()}</div>
+      <button
+        className="topbar-btn start-btn"
+        onClick={this.startGame}
+        type="button"
+      >
+        Start Game
+      </button>
       <Link
-        className="leave-btn"
+        className="topbar-btn leave-btn"
         to={{
           pathname: '/',
           state: { name: this.state.name, room: this.state.room },
@@ -32,8 +40,8 @@ export default class Topbar extends Component {
   );
 
   formattedTime = () => {
-    const minutes = '' + (this.state.time % 60);
-    let seconds = '' + Math.floor(this.state.time / 60);
+    let seconds = '' + (this.state.time % 60);
+    const minutes = '' + Math.floor(this.state.time / 60);
     if (seconds < 10) {
       seconds = '0' + seconds;
     }
@@ -42,7 +50,7 @@ export default class Topbar extends Component {
 
   startGame = () => {
     // emit('joinRoom', { name: this.state.name, room: this.state.room });
-    beginConnection(this.state.room, this.state.name);
+    emit('startGame', { room: this.state.room });
   };
 }
 

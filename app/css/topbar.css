@@ -6,7 +6,7 @@
   height: 5vh;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(4, auto);
   align-items: center;
 }
 
@@ -18,13 +18,21 @@
   align-content: center;
 }
 
-.leave-btn {
+.topbar-btn {
   align-content: right;
-  background-color: #fa5b79;
+
   text-decoration: none;
   height: 3vh;
   width: 50%;
   text-align: center;
   padding: 0.5vh;
   color: black;
+}
+
+.leave-btn {
+  background-color: #fa5b79;
+}
+
+.start-btn {
+  background-color: #47991c;
 }

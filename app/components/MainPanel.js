@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import '../css/menu.css';
-import { beginConnection } from './Connection';
+import { beginConnection, registerMainPanel } from './Connection';
 
 export default class MainPanel extends Component {
   constructor(props) {
@@ -9,7 +9,9 @@ export default class MainPanel extends Component {
     this.state = {
       name: '',
       room: '',
+      error: '',
     };
+    registerMainPanel(this);
   }
 
   render = () => (
@@ -49,6 +51,7 @@ export default class MainPanel extends Component {
       >
         Play
       </Link>
+      <div id="err-msg">{this.state.error}</div>
     </div>
   );
 

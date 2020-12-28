@@ -18,14 +18,12 @@ export default class Rack extends Component {
   }
 
   render = () => {
-    const renderRack = this.state.letters.map(letter => (
-      <Letter
-        key={this.state.letters.indexOf(letter)}
-        id={this.state.letters.indexOf(letter)}
-        letter={letter}
-        rack={this}
-      />
-    ));
+    const renderRack = [];
+    for (let i = 0; i < this.state.letters.length; i += 1) {
+      renderRack.push(
+        <Letter key={i} id={i} letter={this.state.letters[i]} rack={this} />,
+      );
+    }
 
     return (
       <div>
@@ -39,7 +37,15 @@ export default class Rack extends Component {
           >
             Submit
           </button>
-          <div className="rack-btn recall">Reset Rack</div>
+          <button
+            className="rack-btn recall"
+            onClick={() => {
+              emit('ready');
+            }}
+            type="button"
+          >
+            Ready
+          </button>
         </div>
       </div>
     );

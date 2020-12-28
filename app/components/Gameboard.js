@@ -11,6 +11,7 @@ export default class Gameboard extends Component {
     this.state = {
       name: props.name,
       board: [],
+      canPlace: false,
     };
     registerGameboard(this);
     emit('forceUpdate', {});
@@ -21,7 +22,12 @@ export default class Gameboard extends Component {
   renderBoard = () =>
     this.state.board.map(row =>
       row.map(square => (
-        <BoardSquare key={square.id} space={square} name={this.state.name} />
+        <BoardSquare
+          key={square.id}
+          space={square}
+          name={this.state.name}
+          canPlace={this.state.canPlace}
+        />
       )),
     );
 

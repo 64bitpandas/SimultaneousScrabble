@@ -6,6 +6,8 @@ let chat;
 let leaderboard;
 let gameboard;
 let rack;
+let mainpanel;
+let topbar;
 
 export function beginConnection(room, name) {
   socket = io.connect(GLOBAL.LOCALHOST, {
@@ -35,11 +37,22 @@ export function beginConnection(room, name) {
     }
     if (gameboard) {
       gameboard.updateBoard(data.board);
+      gameboard.setState({ canPlace: data.status === 'playing' });
     }
     if (rack) {
       rack.setState({
         letters: data.players.filter(player => player.name === name)[0].letters,
       });
+    }
+    if (topbar) {
+      topbar.setState({
+        time: data.time,
+      });
+    }
+  });
+  socket.on('serverSendJoinError', data => {
+    if (mainpanel) {
+      mainpanel.setState({ error: data.error });
     }
   });
 }
@@ -59,6 +72,12 @@ export function registerGameboard(board) {
 }
 export function registerRack(thisRack) {
   rack = thisRack;
+}
+export function registerMainPanel(thisMainPanel) {
+  mainpanel = thisMainPanel;
+}
+export function registerTopbar(thisTopbar) {
+  topbar = thisTopbar;
 }
 export function getGameboard() {
   return gameboard;
