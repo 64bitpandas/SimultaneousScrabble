@@ -1,14 +1,15 @@
 #gameboard {
   display: grid;
-  grid-template-columns: repeat(15, min(5vh, 3.5vw));
-  grid-template-rows: repeat(15, min(5vh, 3.5vw));
+  grid-template-columns: repeat(15, min(4.5vh, 3.5vw));
+  grid-template-rows: repeat(15, min(4.5vh, 3.5vw));
   margin: 3vw;
-  max-height: 70vh;
+  max-height: 65vh;
 }
 
 .square {
-  background-color: gray;
+  background-color: #fdf7e3;
   border: solid black 1px;
+  position: relative;
 }
 
 .square.TW {
@@ -59,4 +60,12 @@
   height: 100%;
   width: 100%;
   background-color: rgba(255, 233, 171, 0.8);
+}
+
+.modifier {
+  position: absolute;
+  color: white;
+  font-size: 110%;
+  top: 2px;
+  left: 2px;
 }

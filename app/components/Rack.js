@@ -74,6 +74,7 @@ export const Letter = ({ letter, id, rack }) => {
   return (
     <div ref={drag} className="rack-letter">
       {letter}
+      <p className="letter-value">{GLOBAL.LETTER_VALUES[letter]}</p>
     </div>
   );
 };

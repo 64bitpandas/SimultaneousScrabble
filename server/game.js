@@ -340,7 +340,7 @@ const generateBag = letters => {
 
 const validateBoard = (s, board, player, room) => {
   if (data[room].ready.includes(player) || data[room].status !== 'playing') {
-    socket.sendError(`You cannot submit at this time.`);
+    socket.sendError(s, `You cannot submit at this time.`);
     return false;
   }
 
@@ -348,7 +348,7 @@ const validateBoard = (s, board, player, room) => {
   const center = Math.floor(size / 2);
   // check if center is filled
   if (board[center][center].letter === '') {
-    socket.sendError(`You must start at the center!`);
+    socket.sendError(s, `You must start at the center!`);
     return false;
   }
   // make sure pieces are connected
@@ -375,7 +375,7 @@ const validateBoard = (s, board, player, room) => {
   }
 
   if (rowToUse === undefined) {
-    socket.sendError(`Place at least one tile.`);
+    socket.sendError(s, `Place at least one tile.`);
     return false;
   }
 
@@ -387,7 +387,7 @@ const validateBoard = (s, board, player, room) => {
   for (let row = 0; row < newBoard.length; row += 1) {
     for (let col = 0; col < newBoard.length; col += 1) {
       if (newBoard[row][col].temp) {
-        socket.sendError(`Tiles must all be placed in a line.`);
+        socket.sendError(s, `Tiles must all be placed in a line.`);
         return false;
       }
       newBoard[row][col].used = true;
@@ -395,7 +395,7 @@ const validateBoard = (s, board, player, room) => {
   }
 
   if (words.length === 0) {
-    socket.sendError(`Place more than one piece at the center.`);
+    socket.sendError(s, `Place more than one piece at the center.`);
     return false;
   }
 
