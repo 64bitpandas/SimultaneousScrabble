@@ -7,7 +7,7 @@ export default class Leaderboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // name: props.name,
+      name: props.name,
       room: props.room,
       players: [],
     };
@@ -19,6 +19,14 @@ export default class Leaderboard extends Component {
     const playerScores = this.state.players.map(player => (
       <li key={player.name}>
         {player.name}: {player.score}
+        <button
+          type="button"
+          onClick={() => {
+            this.challenge(player.name);
+          }}
+        >
+          Challenge
+        </button>
       </li>
     ));
     return (
@@ -28,9 +36,16 @@ export default class Leaderboard extends Component {
       </div>
     );
   };
+
+  challenge = playerToChallenge => {
+    emit('challenge', {
+      you: this.state.name,
+      them: playerToChallenge,
+    });
+  };
 }
 
 Leaderboard.propTypes = {
-  // name: PropTypes.string,
+  name: PropTypes.string,
   room: PropTypes.string,
 };

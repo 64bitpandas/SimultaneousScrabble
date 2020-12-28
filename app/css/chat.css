@@ -38,6 +38,9 @@
 .chatbox .chat-list li.red {
   color: #fa5b79;
 }
+.chatbox .chat-list li.orange {
+  color: #faaa50;
+}
 
 /* .chatbox .chat-list li.system:before {
   content: "» ";

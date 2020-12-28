@@ -37,7 +37,11 @@ export function beginConnection(room, name) {
     }
     if (gameboard) {
       gameboard.updateBoard(data.board);
-      gameboard.setState({ canPlace: data.status === 'playing' });
+      gameboard.setState({
+        canPlace:
+          data.status === 'playing' &&
+          !data.players.filter(player => player.name === name)[0].loseTurn,
+      });
     }
     if (rack) {
       rack.setState({
@@ -53,6 +57,11 @@ export function beginConnection(room, name) {
   socket.on('serverSendJoinError', data => {
     if (mainpanel) {
       mainpanel.setState({ error: data.error });
+    }
+  });
+  socket.on('serverSendChallengingTime', () => {
+    if (gameboard) {
+      gameboard.tempRemoveAll();
     }
   });
 }

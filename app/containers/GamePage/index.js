@@ -35,7 +35,7 @@ export default function GamePage(props) {
         />
         <Rack name={props.location.state.name} />
         <Leaderboard
-          player={props.location.state.name}
+          name={props.location.state.name}
           room={props.location.state.room}
         />
       </div>

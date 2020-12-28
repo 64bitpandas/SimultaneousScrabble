@@ -1,32 +1,27 @@
-const {
-  joinRoom,
-  getData,
-  setLetters,
-  getPlayerData,
-  deletePlayer,
-  validateBoard,
-  startGame,
-  setReady,
-} = require('./game');
+const game = require('./game');
 
 const dictionary = require('./data/dictionary.json');
 
 /* eslint-disable no-console */
 
-let socket;
 let io;
 
 const setupSocket = i => {
   i.on('connection', s => {
-    socket = s;
     io = i;
-    const { name, room } = socket.handshake.query;
-    console.log(room);
-    socket.join(room);
-    joinRoom(name, room);
+    const { name, room } = s.handshake.query;
+    if (
+      game.getData(room) !== undefined &&
+      game.getData(room).status !== 'waiting'
+    ) {
+      s.emit('serverSendJoinError', { error: 'Game in progress' });
+      return;
+    }
+    s.join(room);
+    game.joinRoom(s, name, room);
     console.log('[Server] '.bold.blue + `${name} connected to ${room}`.green);
-    socket.to(room).broadcast.emit('serverSendLoginMessage', { player: name });
-    socket.to(room).on('playerChat', data => {
+    s.to(room).broadcast.emit('serverSendLoginMessage', { player: name });
+    s.to(room).on('playerChat', data => {
       const sender = data.sender.replace(/(<([^>]+)>)/gi, '');
       const message = data.message.replace(/(<([^>]+)>)/gi, '');
 
@@ -36,60 +31,79 @@ const setupSocket = i => {
             .magenta,
       );
 
-      socket.to(room).broadcast.emit('serverSendPlayerChat', {
+      s.to(room).broadcast.emit('serverSendPlayerChat', {
         sender,
         message: message.substring(0, 35),
       });
     });
-    socket.to(room).on('useLetter', data => {
-      setLetters(room, data.name, data.letters);
-      sendUpdateToPlayer(room);
+    s.to(room).on('useLetter', data => {
+      game.setLetters(room, data.name, data.letters);
+      sendUpdateToPlayer(s, room);
     });
-    socket.to(room).on('requestLetter', data => {
-      setLetters(room, data.name, [
-        ...getPlayerData(room, data.name).letters,
+    s.to(room).on('requestLetter', data => {
+      game.setLetters(room, data.name, [
+        ...game.getPlayerData(room, data.name).letters,
         data.letter,
       ]);
-      sendUpdateToPlayer(room);
+      sendUpdateToPlayer(s, room);
     });
-    // socket.to(room).on('submit', data => {
+    // s.to(room).on('submit', data => {
 
     // });
-    socket.on('requestDefinition', data => {
+    s.on('requestDefinition', data => {
       const cleanedWord = data.word.trim().toLowerCase();
       if (dictionary[cleanedWord]) {
-        socket.emit('serverSendAnnouncement', {
-          msg: `The definition of ${cleanedWord.toUpperCase()} is: ${
+        sendAnnouncement(
+          `The definition of ${cleanedWord.toUpperCase()} is: ${
             dictionary[cleanedWord]
           }`,
-          color: 'purple',
-        });
+        );
       } else {
-        socket.emit('serverSendAnnouncement', {
-          msg: `Sorry, no definition was found for ${cleanedWord.toUpperCase()}`,
-          color: 'purple',
-        });
+        sendAnnouncement(
+          `Sorry, no definition was found for ${cleanedWord.toUpperCase()}`,
+        );
       }
     });
-    socket.on('submit', data => {
-      validateBoard(data.board, name, room);
+    s.on('submit', data => {
+      game.validateBoard(data.board, name, room);
     });
-    socket.on('startGame', () => {
-      startGame(room);
+    s.on('startGame', () => {
+      if (game.getData(room).status !== 'waiting') {
+        sendError(s, 'Game has already started!');
+      } else {
+        game.startGame(room);
+      }
     });
-    socket.on('ready', () => {
-      setReady(room, name);
+    s.on('ready', () => {
+      game.setReady(room, name);
     });
-    socket.to(room).on('forceUpdate', () => {
-      sendUpdateToPlayer(room);
+    s.on('challenge', data => {
+      if (game.getData(room).status === 'challenging') {
+        console.log(data.you);
+        if (data.you !== data.them) {
+          sendGlobalAnnouncement(
+            room,
+            `${data.you} has challenged ${data.them}!`,
+            'blue',
+          );
+          game.challenge(room, data.you, data.them);
+        } else {
+          sendError(s, 'You cannot challenge yourself!');
+        }
+      } else {
+        sendError(s, 'You cannot challenge at this time.');
+      }
     });
-    socket.on('disconnect', () => {
-      socket.to(room).broadcast.emit('serverSendAnnouncement', {
+    s.to(room).on('forceUpdate', () => {
+      sendUpdateToPlayer(s, room);
+    });
+    s.on('disconnect', () => {
+      s.to(room).broadcast.emit('serverSendAnnouncement', {
         msg: `${name} has left the game`,
-        color: 'purple',
+        color: 'red',
       });
       console.log(`${name} has left ${room}`.yellow);
-      deletePlayer(name, room);
+      game.deletePlayer(name, room);
     });
   });
 };
@@ -98,30 +112,34 @@ const sendUpdate = (room, data) => {
   io.in(room).emit('serverSendUpdate', data);
 };
 
-const sendUpdateToPlayer = room => {
-  socket.emit('serverSendUpdate', getData(room));
+const sendUpdateToPlayer = (socket, room) => {
+  socket.emit('serverSendUpdate', game.getData(room));
 };
-const sendError = err => {
+const sendError = (socket, err) => {
   socket.emit('serverSendAnnouncement', {
     msg: err,
     color: 'red',
   });
 };
-const sendAnnouncement = message => {
+const sendAnnouncement = (socket, message) => {
   socket.emit('serverSendAnnouncement', {
     msg: message,
     color: 'purple',
   });
 };
 const sendGlobalAnnouncement = (room, message, color) => {
-  io.in(room).emit('serverSendAnnouncement', {
+  globalEmit(room, 'serverSendAnnouncement', {
     msg: message,
     color,
   });
 };
 
-const emit = (event, data) => {
+const emit = (socket, event, data) => {
   socket.emit(event, data);
+};
+
+const globalEmit = (room, event, data) => {
+  io.in(room).emit(event, data);
 };
 
 exports.emit = emit;
@@ -130,3 +148,4 @@ exports.sendUpdate = sendUpdate;
 exports.sendError = sendError;
 exports.sendAnnouncement = sendAnnouncement;
 exports.sendGlobalAnnouncement = sendGlobalAnnouncement;
+exports.globalEmit = globalEmit;

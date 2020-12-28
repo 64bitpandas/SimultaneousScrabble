@@ -26,8 +26,13 @@ require('colors');
  *      {
  *        name: string,
  *        score: number,
- *        words: [string array],
+ *        words: [{
+ *          word: string,
+ *          score: number,
+ *          challengable: boolean,
+ *        }],
  *        letters: [string array],
+ *        loseTurn: boolean,
  *      }
  *    ]
  * }
@@ -133,12 +138,13 @@ const SPECIALS = {
   CENTER: [[7, 7]],
 };
 
-const joinRoom = (player, room) => {
+const joinRoom = (s, player, room) => {
   const defaultPlayer = {
     name: player,
     score: 0,
     words: [],
     letters: [],
+    loseTurn: false,
   };
 
   if (!data[room]) {
@@ -155,7 +161,7 @@ const joinRoom = (player, room) => {
   } else if (data[room].status === 'waiting') {
     data[room].players.push(defaultPlayer);
   } else {
-    socket.emit('serverSendJoinError', {
+    socket.emit(s, 'serverSendJoinError', {
       error: 'Error: game already started',
     });
   }
@@ -186,6 +192,7 @@ const gameLoop = room =>
       data[room].ready = [];
       if (data[room].status === 'playing') {
         data[room].status = 'challenging';
+        socket.globalEmit(room, 'serverSendChallengingTime');
         socket.sendGlobalAnnouncement(
           room,
           `Round ${data[room].round} has ended. Press ready to continue.`,
@@ -193,17 +200,40 @@ const gameLoop = room =>
         );
         data[room].time = 30;
         data[room].round += 1;
+        data[room].players.forEach((player, index) => {
+          data[room].players[index].loseTurn = false;
+        });
       } else if (data[room].status === 'challenging') {
         data[room].status = 'playing';
+        for (let i = 0; i < data[room].players.length; i += 1) {
+          const player = data[room].players[i];
+          data[room].players[i].letters.push(...drawTiles(room, player));
+          data[room].players[i].lastTurn = [];
+          data[room].players[i].words.forEach((word, index) => {
+            if (player.words[index].challengable) {
+              data[room].players[i].words[index].challengable = false;
+              if (twl[player.words[index].word.toLowerCase()] === undefined) {
+                socket.sendGlobalAnnouncement(
+                  room,
+                  `${player.name} played an illegal word ${
+                    player.words[index].word
+                  }, but nobody challenged it!`,
+                  'orange',
+                );
+              }
+            }
+          });
+        }
+        for (let row = 0; row < data[room].board.length; row += 1) {
+          for (let col = 0; col < data[room].board.length; col += 1) {
+            data[room].board[row][col].challengable = false;
+          }
+        }
         socket.sendGlobalAnnouncement(
           room,
           `Round ${data[room].round} begins.`,
           'blue',
         );
-        for (let i = 0; i < data[room].players.length; i += 1) {
-          const player = data[room].players[i];
-          data[room].players[i].letters.push(...drawTiles(room, player));
-        }
         data[room].time = 60;
       }
     }
@@ -350,10 +380,11 @@ const validateBoard = (board, player, room) => {
       'purple',
     );
     addToPlayerData(room, player, 'score', word.points);
+    getPlayerData(room, player).words.push(word);
   });
 
   // A successful submission!
-  addToPlayerData(room, player, 'words', words);
+  // addToPlayerData(room, player, 'words', words);
   data[room].board = newBoard;
   data[room].ready.push(player);
   socket.sendUpdate(room, data[room]);
@@ -536,11 +567,13 @@ const generateWords = (board, row, col, visited) => {
     words.push({
       word: horizWord,
       points: horizScore * horizMult,
+      challengable: true,
     });
   if (!vertConflict && vertWord !== '')
     words.push({
       word: vertWord,
       points: vertScore * vertMult,
+      challengable: true,
     });
 
   return [newBoard, words];
@@ -548,11 +581,61 @@ const generateWords = (board, row, col, visited) => {
 
 const setReady = (room, player) => {
   if (
-    data[room].status === 'challenging' &&
+    // data[room].status === 'challenging' &&
     !data[room].ready.includes(player)
   ) {
     data[room].ready.push(player);
   }
+};
+
+const challenge = (room, you, them) => {
+  const invalidWords = [];
+  getPlayerData(room, them).words.map(word => {
+    if (word.challengable) {
+      const newWord = word;
+      if (twl[word.word.toLowerCase()] === undefined) {
+        addToPlayerData(room, them, 'score', -word.points);
+        socket.sendGlobalAnnouncement(
+          room,
+          `${word.word} is not a valid word!`,
+          'blue',
+        );
+        newWord.points = 0;
+        invalidWords.push(word);
+      }
+      newWord.challengable = false;
+      return newWord;
+    }
+    return word;
+  });
+  if (invalidWords.length > 0) {
+    socket.sendGlobalAnnouncement(room, `${them} loses a turn.`, 'blue');
+    // for (let row = 0; row < data[room].board.length; row += 1) {
+    //   for (let col = 0; col < data[room].board.length; col += 1) {
+    //     if (
+    //       data[room].board[row][col].challengable &&
+    //       data[room].board[row][col].owner === you
+    //     ) {
+    //       data[room].board[row][col].challengable = false;
+    //       data[room].board[row][col].owner = '';
+    //       data[room].board[row][col].letter = '';
+    //       setLetters(room, you, [
+    //         ...getPlayerData(room, you).letters,
+    //         data[room].board[row][col].letter,
+    //       ]);
+    //     }
+    //   }
+    // }
+    setPlayerData(room, them, 'loseTurn', true);
+  } else {
+    setPlayerData(room, you, 'loseTurn', true);
+    socket.sendGlobalAnnouncement(
+      room,
+      `All words played by ${them} are valid! ${you} loses a turn.`,
+      'blue',
+    );
+  }
+  socket.sendUpdate(room, data[room]);
 };
 
 exports.joinRoom = joinRoom;
@@ -564,3 +647,4 @@ exports.deletePlayer = deletePlayer;
 exports.isWord = isWord;
 exports.validateBoard = validateBoard;
 exports.startGame = startGame;
+exports.challenge = challenge;

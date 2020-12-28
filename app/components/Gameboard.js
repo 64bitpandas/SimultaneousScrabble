@@ -58,8 +58,7 @@ export default class Gameboard extends Component {
   };
 
   tempUpdate = (id, data) => {
-    const row = Math.floor(id / GLOBAL.SMALL_BOARD_SIZE);
-    const col = id % GLOBAL.SMALL_BOARD_SIZE;
+    const [row, col] = this.rowCol(id);
 
     this.setState(oldBoard => {
       const updatedBoard = oldBoard.board;
@@ -69,8 +68,7 @@ export default class Gameboard extends Component {
   };
 
   tempRemove = (id, requestLetter) => {
-    const row = Math.floor(id / GLOBAL.SMALL_BOARD_SIZE);
-    const col = id % GLOBAL.SMALL_BOARD_SIZE;
+    const [row, col] = this.rowCol(id);
     if (requestLetter) {
       emit('requestLetter', {
         name: this.state.name,
@@ -84,6 +82,23 @@ export default class Gameboard extends Component {
       return { board: updatedBoard };
     });
   };
+
+  tempRemoveAll = () => {
+    for (let row = 0; row < GLOBAL.SMALL_BOARD_SIZE; row += 1) {
+      for (let col = 0; col < GLOBAL.SMALL_BOARD_SIZE; col += 1) {
+        if (this.state.board[row][col].temp) {
+          this.tempRemove(this.id(row, col), true);
+        }
+      }
+    }
+  };
+
+  id = (row, col) => row * GLOBAL.SMALL_BOARD_SIZE + col;
+
+  rowCol = id => [
+    Math.floor(id / GLOBAL.SMALL_BOARD_SIZE),
+    id % GLOBAL.SMALL_BOARD_SIZE,
+  ];
 }
 
 Gameboard.propTypes = {
