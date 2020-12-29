@@ -414,6 +414,19 @@ const validateBoard = (s, board, player, room) => {
   // addToPlayerData(room, player, 'words', words);
   data[room].board = newBoard;
   data[room].ready.push(player);
+
+  if (
+    getPlayerData(room, player).letters.length === 0 &&
+    data[room].bag.length > 0
+  ) {
+    socket.sendGlobalAnnouncement(
+      room,
+      `${player} got a BINGO! +50 points!`,
+      'purple',
+    );
+    addToPlayerData(room, player, 'score', 50);
+  }
+
   socket.sendUpdate(room, data[room]);
   return true;
 };
@@ -657,6 +670,12 @@ const challenge = (room, you, them) => {
     //   }
     // }
     setPlayerData(room, them, 'loseTurn', true);
+    if (
+      getPlayerData(room, them).letters.length === 0 &&
+      data[room].bag.length > 0
+    ) {
+      addToPlayerData(room, them, 'score', -50);
+    }
   } else {
     setPlayerData(room, you, 'loseTurn', true);
     socket.sendGlobalAnnouncement(
