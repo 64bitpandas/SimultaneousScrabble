@@ -21,6 +21,7 @@ export default class Leaderboard extends Component {
         {player.name}: {player.score}
         <button
           type="button"
+          className="challenge-btn"
           onClick={() => {
             this.challenge(player.name);
           }}

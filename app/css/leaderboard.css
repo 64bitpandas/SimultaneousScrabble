@@ -10,3 +10,7 @@
 #leaderboard ol {
   columns: 2;
 }
+
+.challenge-btn {
+  margin-left: 1vw;
+}

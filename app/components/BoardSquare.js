@@ -24,7 +24,9 @@ export const BoardSquare = ({ space, name, canPlace }) => {
   });
   return (
     <div ref={drop} className={'square ' + space.modifier} key={space.id}>
-      {space.letter === '' && <p className="modifier">{space.modifier}</p>}
+      {space.letter === '' && space.modifier !== 'CENTER' && (
+        <p className="modifier">{space.modifier}</p>
+      )}
       {isOver && !canDrop && <div className="overlay-bad" />}
       {isOver && canDrop && <div className="overlay-good" />}
       {space.temp && <FilledSquare letter={space.letter} id={space.id} />}

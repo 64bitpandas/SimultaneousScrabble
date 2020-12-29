@@ -12,27 +12,68 @@
 
 #topbar h1 {
   margin: 0;
+  padding-left: 3vw;
 }
 
 #timer {
   align-content: center;
+  font-size: 200%;
+  font-weight: 500;
 }
 
 .topbar-btn {
-  align-content: right;
-
   text-decoration: none;
   height: 3vh;
-  width: 50%;
-  text-align: center;
+  width: 45%;
   padding: 0.5vh;
+  margin-top: auto;
+  margin-bottom: auto;
+  color: black;
+  font-size: large;
+  text-align: center;
+  border: 0;
+  cursor: pointer;
+  border-radius: 5px 5px 5px 5px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  vertical-align: middle;
+}
+
+.topbar-btn:active,
+.topbar-btn:hover {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  position: relative;
   color: black;
 }
 
 .leave-btn {
   background-color: #fa5b79;
+  border-bottom: 2px solid #ED0732;
+  box-shadow: inset 0 -2px #ED0732;
+  -webkit-box-shadow: inset 0 #ED0732;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+}
+
+.leave-btn:active,
+.leave-btn:hover {
+  background: #ED0732;
+  color: white;
 }
 
 .start-btn {
-  background-color: #47991c;
+  background-color: #90ee90;
+  border-bottom: 2px solid #47991c;
+  box-shadow: inset 0 -2px #47991c;
+  -webkit-box-shadow: inset 0 #47991c;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+  margin-left: 5vw;
+}
+
+.start-btn:active,
+.start-btn:hover {
+  background: #47991c;
+  color: white;
 }
