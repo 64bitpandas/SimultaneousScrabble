@@ -9,8 +9,8 @@ let rack;
 let mainpanel;
 let topbar;
 
-export function beginConnection(room, name) {
-  socket = io.connect(GLOBAL.LOCALHOST, {
+export function beginConnection(room, name, server) {
+  socket = io.connect(server === '' ? GLOBAL.LOCALHOST : server, {
     query: `room=${room}&name=${name}`,
     reconnectionAttempts: 3,
     transports: ['websocket', 'polling', 'flashsocket'],

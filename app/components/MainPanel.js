@@ -10,6 +10,7 @@ export default class MainPanel extends Component {
       name: '',
       room: '',
       error: '',
+      server: '',
     };
     registerMainPanel(this);
   }
@@ -40,6 +41,17 @@ export default class MainPanel extends Component {
           this.setState({ room: txt.target.value });
         }}
       />
+      <input
+        className="menuInputBox box"
+        type="text"
+        tabIndex="0"
+        placeholder="Enter server (optional)"
+        id="server"
+        spellCheck="false"
+        onChange={txt => {
+          this.setState({ server: txt.target.value });
+        }}
+      />
       <Link
         to={{
           pathname: '/game',
@@ -57,6 +69,6 @@ export default class MainPanel extends Component {
 
   startGame = () => {
     // emit('joinRoom', { name: this.state.name, room: this.state.room });
-    beginConnection(this.state.room, this.state.name);
+    beginConnection(this.state.room, this.state.name, this.state.server);
   };
 }
