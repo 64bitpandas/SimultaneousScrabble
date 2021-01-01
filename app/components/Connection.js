@@ -51,6 +51,7 @@ export function beginConnection(room, name, server) {
     if (topbar) {
       topbar.setState({
         time: data.time,
+        status: data.status,
       });
     }
   });

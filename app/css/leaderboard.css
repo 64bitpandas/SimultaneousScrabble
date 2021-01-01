@@ -8,7 +8,8 @@
 }
 
 #leaderboard ol {
-  columns: 2;
+  columns: 1;
+  margin: 5px;
 }
 
 .challenge-btn {

@@ -14,19 +14,19 @@
 }
 
 .square.TW {
-  background-color: red;
+  background-color: #d62828;
 }
 
 .square.DW {
-  background-color: orange;
+  background-color: #ff8da1;
 }
 
 .square.TL {
-  background-color: blue;
+  background-color: #4361ee;
 }
 
 .square.DL {
-  background-color: green;
+  background-color: #48cae4;
 }
 
 .square.CENTER {
@@ -66,7 +66,9 @@
 .modifier {
   position: absolute;
   color: white;
+  font-family: 'Ropa Sans';
+  margin: 0;
   font-size: 110%;
-  top: 2px;
+  bottom: 2px;
   left: 2px;
 }

@@ -13,12 +13,18 @@
 #topbar h1 {
   margin: 0;
   padding-left: 3vw;
+  font-weight: 500;
 }
 
 #timer {
   align-content: center;
   font-size: 200%;
   font-weight: 500;
+}
+
+#timer.low {
+  color: #ff4517;
+  font-weight: bold;
 }
 
 .topbar-btn {

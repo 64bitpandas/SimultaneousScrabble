@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:regular,bold,italic&subset=latin,latin-ext');
+  @import url('https://fonts.googleapis.com/css2?family=Ropa+Sans:ital@0;1&display=swap');
 
   html,
   body {
@@ -10,7 +10,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Ropa Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
 
   body.fontLoaded {

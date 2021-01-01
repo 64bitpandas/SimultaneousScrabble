@@ -11,6 +11,7 @@ export default class Topbar extends Component {
       time: 0,
       room: props.room,
       name: props.name,
+      status: '',
     };
     registerTopbar(this);
   }
@@ -18,7 +19,12 @@ export default class Topbar extends Component {
   render = () => (
     <div id="topbar">
       <h1>Simultaneous Scrabble</h1>
-      <div id="timer">{this.formattedTime()}</div>
+      <div
+        id="timer"
+        className={this.state.time <= 15 && this.state.time > 0 ? 'low' : ''}
+      >
+        {this.formattedTime()} · {this.state.status}
+      </div>
       <button
         className="topbar-btn start-btn"
         onClick={this.startGame}
