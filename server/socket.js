@@ -105,7 +105,7 @@ const setupSocket = i => {
         color: 'red',
       });
       console.log(`${name} has left ${room}`.yellow);
-      game.deletePlayer(name, room);
+      game.deletePlayer(room, name);
     });
   });
 };

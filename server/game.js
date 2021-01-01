@@ -319,10 +319,15 @@ const setLetters = (room, player, letters) => {
   setPlayerData(room, player, 'letters', letters);
 };
 const deletePlayer = (room, player) => {
-  if (data[room])
+  if (data[room]) {
     data[room].players = data[room].players.filter(
       item => item.name !== player,
     );
+    if (data[room].players.length === 0) {
+      console.log(`Room ${room} was deleted`.red);
+      delete data[room];
+    }
+  }
 };
 const isWord = word => {
   const cleanedWord = word.trim().toLowerCase();
