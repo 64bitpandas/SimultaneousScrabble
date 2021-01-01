@@ -8,6 +8,8 @@ let gameboard;
 let rack;
 let mainpanel;
 let topbar;
+let currLetter = '';
+let dropped = false;
 
 export function beginConnection(room, name, server) {
   socket = io.connect(server === '' ? GLOBAL.LOCALHOST : server, {
@@ -100,4 +102,16 @@ export function submit() {
 export function quitGame() {
   chat.appendMessage(`${chat.state.player} has left the game`, 'purple');
   socket.disconnect();
+}
+export function getCurrLetter() {
+  return currLetter;
+}
+export function setCurrLetter(newLetter) {
+  currLetter = newLetter;
+}
+export function setDropped(drop) {
+  dropped = drop;
+}
+export function getDropped() {
+  return dropped;
 }

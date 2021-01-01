@@ -185,6 +185,11 @@ const startGame = room => {
 
 const gameLoop = room =>
   setInterval(() => {
+    if (data[room] === undefined) {
+      clearInterval(loops[room]);
+      delete loops[room];
+      return;
+    }
     data[room].time -= 1;
 
     if (
@@ -204,7 +209,6 @@ const gameLoop = room =>
         data[room].round += 1;
         data[room].players.forEach((player, index) => {
           data[room].players[index].loseTurn = false;
-          data[room].players[index].letters.push(...drawTiles(room, player));
         });
         data[room].players.sort((a, b) => b.score - a.score);
       } else if (data[room].status === 'challenging') {
@@ -213,6 +217,7 @@ const gameLoop = room =>
         for (let i = 0; i < data[room].players.length; i += 1) {
           const player = data[room].players[i];
           data[room].players[i].lastTurn = [];
+          data[room].players[i].letters.push(...drawTiles(room, player));
           data[room].players[i].words.forEach((word, index) => {
             if (player.words[index].challengable) {
               data[room].players[i].words[index].challengable = false;

@@ -47,6 +47,11 @@ const setupSocket = i => {
       ]);
       sendUpdateToPlayer(s, room);
     });
+
+    s.to(room).on('shuffleLetters', data => {
+      game.setLetters(room, data.player, data.letters);
+      sendUpdateToPlayer(s, room);
+    });
     // s.to(room).on('submit', data => {
 
     // });
