@@ -356,8 +356,8 @@ const validateBoard = (s, board, player, room) => {
   let rowToUse;
   let colToUse;
 
-  for (let row = 0; row < board.length; row += 1) {
-    for (let col = 0; col < board.length; col += 1) {
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
       if (board[row][col].temp) {
         if (connected.includes(row * size + col)) {
           rowToUse = row;
@@ -366,7 +366,7 @@ const validateBoard = (s, board, player, room) => {
             socket.sendError(s, `Tiles must all be placed in a line.`);
             return false;
           }
-        } else if (row < 14) {
+        } else {
           socket.sendError(s, `All pieces must be connected.`);
           return false;
         }
@@ -443,12 +443,11 @@ const generateConnected = (board, row, col, visited) => {
   if (board[row][col].letter === '') {
     return [];
   }
-  return (
-    [id(row, col)] +
-    generateConnected(board, row + 1, col, visited + [id(row, col)]) +
-    generateConnected(board, row - 1, col, visited + [id(row, col)]) +
-    generateConnected(board, row, col + 1, visited + [id(row, col)]) +
-    generateConnected(board, row, col - 1, visited + [id(row, col)])
+  return [id(row, col)].concat(
+    generateConnected(board, row + 1, col, visited.concat(id(row, col))),
+    generateConnected(board, row - 1, col, visited.concat(id(row, col))),
+    generateConnected(board, row, col + 1, visited.concat(id(row, col))),
+    generateConnected(board, row, col - 1, visited.concat(id(row, col))),
   );
 };
 
