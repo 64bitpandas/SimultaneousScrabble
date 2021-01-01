@@ -176,6 +176,7 @@ const startGame = room => {
   }
   data[room].status = 'playing';
   data[room].time = 60;
+  data[room].ready = [];
   console.log(`The game in room ${room} has started!`.magenta);
   socket.sendGlobalAnnouncement(room, `Round 1 begins.`, 'blue');
   socket.sendUpdate(room, data[room]);
@@ -203,6 +204,7 @@ const gameLoop = room =>
         data[room].round += 1;
         data[room].players.forEach((player, index) => {
           data[room].players[index].loseTurn = false;
+          data[room].players[index].letters.push(...drawTiles(room, player));
         });
         data[room].players.sort((a, b) => b.score - a.score);
       } else if (data[room].status === 'challenging') {
@@ -210,7 +212,6 @@ const gameLoop = room =>
         let notGameOver = false;
         for (let i = 0; i < data[room].players.length; i += 1) {
           const player = data[room].players[i];
-          data[room].players[i].letters.push(...drawTiles(room, player));
           data[room].players[i].lastTurn = [];
           data[room].players[i].words.forEach((word, index) => {
             if (player.words[index].challengable) {
