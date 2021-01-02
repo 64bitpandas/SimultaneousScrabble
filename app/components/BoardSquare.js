@@ -9,7 +9,7 @@ export const BoardSquare = ({ space, name, canPlace }) => {
   const [hover, setHover] = useState(false);
   const [, drop] = useDrop({
     accept: GLOBAL.TILE,
-    canDrop: () => canPlace && space.letter === '',
+    canDrop: () => canPlace && space.letter === '' && space.letter !== '*',
     drop: item =>
       getGameboard().tempUpdate(space.id, {
         id: space.id,
@@ -90,10 +90,10 @@ const FilledSquare = ({ letter, id }) => {
 const squareHTML = (letter, color, ref) => (
   <div className="board-square" ref={ref}>
     <div className={'letter ' + color}>
-      {letter === null || letter === 'BLANK' ? '' : letter}
+      {letter.includes('BLANK') ? letter.substring(6) : letter}
     </div>
     <div className={'letter-score ' + color}>
-      {GLOBAL.LETTER_VALUES[letter]}
+      {letter.includes('BLANK') ? '*' : GLOBAL.LETTER_VALUES[letter]}
     </div>
   </div>
 );

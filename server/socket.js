@@ -53,6 +53,14 @@ const setupSocket = i => {
       sendUpdateToPlayer(s, room);
     });
 
+    s.to(room).on('setBlank', data => {
+      console.log('setblank');
+      const letters = [...game.getPlayerData(room, data.player).letters];
+      letters[data.index] = 'BLANK_' + data.letter.toUpperCase();
+      game.setLetters(room, data.player, letters);
+      sendUpdate(s, room);
+    });
+
     // s.to(room).on('submit', data => {
 
     // });

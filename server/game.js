@@ -47,34 +47,39 @@ const loops = {};
 
 const SIZE = 15;
 
+// const LETTERS = {
+//   A: [1, 9],
+//   B: [3, 2],
+//   C: [3, 2],
+//   D: [2, 4],
+//   E: [1, 12],
+//   F: [4, 2],
+//   G: [2, 3],
+//   H: [4, 2],
+//   I: [1, 9],
+//   J: [8, 1],
+//   K: [5, 1],
+//   L: [1, 4],
+//   M: [3, 2],
+//   N: [1, 6],
+//   O: [1, 8],
+//   P: [3, 2],
+//   Q: [10, 1],
+//   R: [1, 6],
+//   S: [1, 4],
+//   T: [1, 6],
+//   U: [1, 4],
+//   V: [4, 2],
+//   W: [4, 2],
+//   X: [8, 1],
+//   Y: [4, 2],
+//   Z: [10, 1],
+//   BLANK: [0, 2],
+// };
+
 const LETTERS = {
-  A: [1, 9],
-  B: [3, 2],
-  C: [3, 2],
-  D: [2, 4],
-  E: [1, 12],
-  F: [4, 2],
-  G: [2, 3],
-  H: [4, 2],
-  I: [1, 9],
-  J: [8, 1],
-  K: [5, 1],
-  L: [1, 4],
-  M: [3, 2],
-  N: [1, 6],
-  O: [1, 8],
-  P: [3, 2],
-  Q: [10, 1],
-  R: [1, 6],
-  S: [1, 4],
-  T: [1, 6],
-  U: [1, 4],
-  V: [4, 2],
-  W: [4, 2],
-  X: [8, 1],
-  Y: [4, 2],
-  Z: [10, 1],
-  BLANK: [0, 2],
+  BLANK: [0, 5],
+  A: [1, 5],
 };
 
 const SPECIALS = {
@@ -223,10 +228,7 @@ const gameLoop = room =>
           data[room].players[i].words.forEach((word, index) => {
             if (player.words[index].challengable) {
               data[room].players[i].words[index].challengable = false;
-              if (
-                !player.words[index].word.includes('*') &&
-                twl[player.words[index].word.toLowerCase()] === undefined
-              ) {
+              if (twl[player.words[index].word.toLowerCase()] === undefined) {
                 socket.sendGlobalAnnouncement(
                   room,
                   `${player.name} played an illegal word ${
@@ -374,6 +376,13 @@ const validateBoard = (s, board, player, room) => {
   for (let row = 0; row < size; row += 1) {
     for (let col = 0; col < size; col += 1) {
       if (board[row][col].temp) {
+        if (board[row][col].letter === '*') {
+          socket.sendError(
+            s,
+            `You must set blank tiles before playing them. Click on them when in the rack!`,
+          );
+          return false;
+        }
         if (connected.includes(row * size + col)) {
           rowToUse = row;
           colToUse = col;
@@ -513,7 +522,9 @@ const generateWords = (board, row, col, visited) => {
   };
 
   const getPts = (r, c, horiz) => {
-    let pts = board[r][c].letter === '*' ? 0 : LETTERS[board[r][c].letter][0];
+    let pts = board[r][c].letter.includes('BLANK')
+      ? 0
+      : LETTERS[board[r][c].letter][0];
     if (board[r][c].used) {
       // console.log(`${board[r][c].letter} was worth ${pts} points USED`);
       return pts;
@@ -557,7 +568,7 @@ const generateWords = (board, row, col, visited) => {
     let r = row;
     lock = 'H+';
     while (r < board.length && board[r][col].letter !== '') {
-      horizWord += board[r][col].letter;
+      horizWord += cleanLetter(board[r][col].letter);
       horizScore += getPts(r, col, true);
       if (!newVisited.includes(id(r, col))) {
         recursiveQueue.push([r, col]);
@@ -573,7 +584,7 @@ const generateWords = (board, row, col, visited) => {
     let r = row;
     if (lock === 'H+') r -= 1;
     while (r >= 0 && board[r][col].letter !== '') {
-      horizWord = board[r][col].letter + horizWord;
+      horizWord = cleanLetter(board[r][col].letter) + horizWord;
       horizScore += getPts(r, col, true);
       if (!newVisited.includes(id(r, col))) {
         recursiveQueue.push([r, col]);
@@ -589,7 +600,7 @@ const generateWords = (board, row, col, visited) => {
     lock = 'V+';
     let c = col;
     while (c < board.length && board[row][c].letter !== '') {
-      vertWord += board[row][c].letter;
+      vertWord += cleanLetter(board[row][c].letter);
       vertScore += getPts(row, c, false);
       if (!newVisited.includes(id(row, c))) {
         recursiveQueue.push([row, c]);
@@ -604,7 +615,7 @@ const generateWords = (board, row, col, visited) => {
     let c = col;
     if (lock === 'V+') c -= 1;
     while (c >= 0 && board[row][c].letter !== '') {
-      vertWord = board[row][c].letter + vertWord;
+      vertWord = cleanLetter(board[row][c].letter) + vertWord;
       vertScore += getPts(row, c, false);
       if (!newVisited.includes(id(row, c))) {
         recursiveQueue.push([row, c]);
@@ -700,6 +711,9 @@ const challenge = (room, you, them) => {
   }
   socket.sendUpdate(room, data[room]);
 };
+
+const cleanLetter = letter =>
+  letter.includes('BLANK') ? letter.substring(6) : letter;
 
 exports.joinRoom = joinRoom;
 exports.getData = getData;

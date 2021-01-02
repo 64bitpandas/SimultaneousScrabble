@@ -101,3 +101,21 @@
   background: #47991c;
   color: white;
 }
+
+.blank-input {
+  text-transform: uppercase;
+}
+
+.blank {
+  color: #4361EE;
+  margin: 0;
+  font-family: 'Ropa Sans';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  line-height: 1em;
+}
+
+.blank-hover:hover {
+  background-color: #8EBEF5;
+}

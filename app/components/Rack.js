@@ -2,6 +2,7 @@ import '../css/rack.css';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import swal from '@sweetalert/with-react';
 import {
   emit,
   getDropped,
@@ -138,7 +139,9 @@ export default class Rack extends Component {
   };
 }
 
-export const Letter = ({ letter, id, index }) => {
+let blankInput = '';
+
+export const Letter = ({ letter, id, index, rack }) => {
   // const [, drag] = useDrag({
   //   item: { type: GLOBAL.TILE, letter },
   //   collect: monitor => ({
@@ -169,6 +172,59 @@ export const Letter = ({ letter, id, index }) => {
     };
   };
 
+  const handleBlank = () => {
+    if (!letter.includes('BLANK') && letter !== '*') return;
+    swal({
+      text: 'Set Blank Letter',
+      buttons: {
+        cancel: 'Cancel',
+        submit: {
+          text: 'Submit',
+          value: 'submit',
+        },
+      },
+      content: (
+        <div>
+          <p>Enter a valid letter from A to Z:</p>
+          <input
+            id="blankInput"
+            type="text"
+            className="blank-input"
+            placeholder="Letter"
+            maxLength="100"
+            spellCheck="false"
+            onChange={blankInputChange}
+            onKeyDown={event => {
+              if (
+                event.key !== 'Backspace' &&
+                event.key !== 'Delete' &&
+                event.target.value.length === 1
+              )
+                event.preventDefault();
+            }}
+            autoComplete="off"
+          />
+        </div>
+      ),
+    }).then(value => {
+      if (value !== null) {
+        emit('setBlank', {
+          player: rack.state.name,
+          letter: blankInput,
+          index,
+        });
+      }
+    });
+  };
+
+  const blankInputChange = event => {
+    blankInput = event.target.value;
+
+    setTimeout(() => {
+      console.log(blankInput);
+    }, 1000);
+  };
+
   return (
     <Draggable key={id} draggableId={'' + id} index={index}>
       {(provided, snapshot) => (
@@ -176,10 +232,22 @@ export const Letter = ({ letter, id, index }) => {
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          className="rack-letter"
+          className={
+            letter.includes('BLANK') || letter.includes('*')
+              ? 'blank-hover rack-letter'
+              : 'rack-letter'
+          }
           style={getStyle(provided.draggableProps.style, snapshot)}
+          onClick={handleBlank}
+          onKeyDown={handleBlank}
+          role="button"
+          tabIndex={index}
         >
-          {letter}
+          {letter.includes('BLANK') ? (
+            <p className="blank">{letter.substring(6)}</p>
+          ) : (
+            letter
+          )}
           <p className="letter-value">{GLOBAL.LETTER_VALUES[letter]}</p>
         </div>
       )}
@@ -191,6 +259,7 @@ Letter.propTypes = {
   letter: PropTypes.string,
   id: PropTypes.number,
   index: PropTypes.number,
+  rack: PropTypes.object,
 };
 
 Rack.propTypes = {
