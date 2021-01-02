@@ -56,6 +56,14 @@ export function beginConnection(room, name, server) {
         status: data.status,
       });
     }
+    if (
+      data.players.filter(player => player.name === name)[0].kick.length >=
+        data.players.length - 1 &&
+      data.players.length > 1
+    ) {
+      quitGame();
+      window.location = '/';
+    }
   });
   socket.on('serverSendJoinError', data => {
     if (mainpanel) {

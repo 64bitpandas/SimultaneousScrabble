@@ -28,6 +28,15 @@ export default class Leaderboard extends Component {
         >
           Challenge
         </button>
+        <button
+          type="button"
+          className="challenge-btn"
+          onClick={() => {
+            this.kick(player.name);
+          }}
+        >
+          Kick
+        </button>
       </li>
     ));
     return (
@@ -42,6 +51,13 @@ export default class Leaderboard extends Component {
     emit('challenge', {
       you: this.state.name,
       them: playerToChallenge,
+    });
+  };
+
+  kick = playerToKick => {
+    emit('votekick', {
+      you: this.state.name,
+      them: playerToKick,
     });
   };
 }

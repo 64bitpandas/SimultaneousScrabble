@@ -34,6 +34,7 @@ require('colors');
  *        }],
  *        letters: [string array],
  *        loseTurn: boolean,
+ *        kick: [string array],
  *      }
  *    ]
  * }
@@ -146,6 +147,7 @@ const joinRoom = (s, player, room) => {
     words: [],
     letters: [],
     loseTurn: false,
+    kick: [],
   };
 
   if (!data[room]) {
@@ -700,6 +702,7 @@ const challenge = (room, you, them) => {
 exports.joinRoom = joinRoom;
 exports.getData = getData;
 exports.setLetters = setLetters;
+exports.setPlayerData = setPlayerData;
 exports.getPlayerData = getPlayerData;
 exports.setReady = setReady;
 exports.deletePlayer = deletePlayer;

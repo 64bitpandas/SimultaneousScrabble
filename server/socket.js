@@ -52,6 +52,7 @@ const setupSocket = i => {
       game.setLetters(room, data.player, data.letters);
       sendUpdateToPlayer(s, room);
     });
+
     // s.to(room).on('submit', data => {
 
     // });
@@ -101,6 +102,30 @@ const setupSocket = i => {
         sendError(s, 'You cannot challenge at this time.');
       }
     });
+
+    s.to(room).on('votekick', data => {
+      if (data.you !== data.them) {
+        const playersNeeded = game.getData(room).players.length - 1;
+        if (!game.getPlayerData(room, data.them).kick.includes(data.you)) {
+          game.setPlayerData(
+            room,
+            data.them,
+            'kick',
+            game.getPlayerData(room, data.them).kick.concat([data.you]),
+          );
+        }
+        sendGlobalAnnouncement(
+          room,
+          `${data.you} votes to kick ${data.them}! (${
+            game.getPlayerData(room, data.them).kick.length
+          }/${playersNeeded})`,
+        );
+        sendUpdate(room, game.getData(room));
+      } else {
+        sendError(s, 'You cannot kick yourself.');
+      }
+    });
+
     s.to(room).on('forceUpdate', () => {
       sendUpdateToPlayer(s, room);
     });
