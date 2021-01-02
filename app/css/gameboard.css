@@ -71,6 +71,7 @@
   left: 3px;
   margin: 0;
   font-size: 200%;
+  user-select: none;
 }
 
 .letter-score {
@@ -79,6 +80,7 @@
   bottom: 2px;
   right: 2px;
   margin: 0;
+  user-select: none;
 }
 
 .modifier {
@@ -89,4 +91,5 @@
   font-size: 110%;
   bottom: 2px;
   left: 2px;
+  user-select: none;
 }

@@ -13,6 +13,7 @@
   padding: 1px;
   font-size: 200%;
   position: relative;
+  user-select: none;
 }
 
 #rack-buttons {
@@ -38,6 +39,7 @@
   bottom: 0;
   font-size: 70%;
   margin: 0;
+  user-select: none;
 }
 
 
