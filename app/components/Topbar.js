@@ -25,13 +25,15 @@ export default class Topbar extends Component {
       >
         {this.formattedTime()} · {this.state.status}
       </div>
-      <button
-        className="topbar-btn start-btn"
-        onClick={this.startGame}
-        type="button"
-      >
-        Start Game
-      </button>
+      {this.state.status === 'waiting' && (
+        <button
+          className="topbar-btn start-btn"
+          onClick={this.startGame}
+          type="button"
+        >
+          Start Game
+        </button>
+      )}
       <Link
         className="topbar-btn leave-btn"
         to={{

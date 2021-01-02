@@ -61,6 +61,8 @@
   box-shadow: inset 0 -2px #ED0732;
   -webkit-box-shadow: inset 0 #ED0732;
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.25);
+  justify-self: right;
+  margin-right: 5vw;
 }
 
 .leave-btn:active,
