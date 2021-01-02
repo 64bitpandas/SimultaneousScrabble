@@ -177,7 +177,7 @@ const startGame = room => {
     data[room].players[i].letters.push(...drawTiles(room, player));
   }
   data[room].status = 'playing';
-  data[room].time = 60;
+  data[room].time = 90;
   data[room].ready = [];
   console.log(`The game in room ${room} has started!`.magenta);
   socket.sendGlobalAnnouncement(room, `Round 1 begins.`, 'blue');
@@ -258,7 +258,9 @@ const gameLoop = room =>
         } else {
           socket.sendGlobalAnnouncement(
             room,
-            `Round ${data[room].round} begins.`,
+            `Round ${data[room].round} begins. There are ${
+              data[room].bag.length
+            } tiles remaining.`,
             'blue',
           );
           data[room].time = 60;

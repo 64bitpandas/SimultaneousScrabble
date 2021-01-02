@@ -1,6 +1,6 @@
 const game = require('./game');
 
-const dictionary = require('./data/dictionary.json');
+// const dictionary = require('./data/dictionary.json');
 
 /* eslint-disable no-console */
 
@@ -56,22 +56,22 @@ const setupSocket = i => {
     // s.to(room).on('submit', data => {
 
     // });
-    s.on('requestDefinition', data => {
-      const cleanedWord = data.word.trim().toLowerCase();
-      if (dictionary[cleanedWord]) {
-        sendAnnouncement(
-          s,
-          `The definition of ${cleanedWord.toUpperCase()} is: ${
-            dictionary[cleanedWord]
-          }`,
-        );
-      } else {
-        sendAnnouncement(
-          s,
-          `Sorry, no definition was found for ${cleanedWord.toUpperCase()}`,
-        );
-      }
-    });
+    // s.on('requestDefinition', data => {
+    //   const cleanedWord = data.word.trim().toLowerCase();
+    //   if (dictionary[cleanedWord]) {
+    //     sendAnnouncement(
+    //       s,
+    //       `The definition of ${cleanedWord.toUpperCase()} is: ${
+    //         dictionary[cleanedWord]
+    //       }`,
+    //     );
+    //   } else {
+    //     sendAnnouncement(
+    //       s,
+    //       `Sorry, no definition was found for ${cleanedWord.toUpperCase()}`,
+    //     );
+    //   }
+    // });
     s.on('submit', data => {
       game.validateBoard(s, data.board, name, room);
     });
