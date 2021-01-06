@@ -10,6 +10,36 @@
   align-items: center;
 }
 
+#topbar.playing {
+  background-color: #a3ff87;
+}
+
+#topbar.challenging {
+  background-color: #ffaf47;
+}
+
+#topbar .progress {
+  position: absolute;
+  opacity: 0.5;
+  height: 5vh;
+  width: 100%;
+  z-index: 0;
+  transition: all 1s linear;
+}
+
+.progress.playing {
+  background-color: #47991c;
+}
+
+.progress.challenging {
+  background-color: #ed8421;
+}
+
+#logo-img {
+  height: 4vh;
+  z-index: 10;
+}
+
 #topbar h1 {
   margin: 0;
   padding-left: 3vw;
@@ -20,6 +50,7 @@
   align-content: center;
   font-size: 200%;
   font-weight: 500;
+  z-index: 10;
 }
 
 #timer.low {
@@ -43,6 +74,7 @@
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
   vertical-align: middle;
+  z-index: 10;
 }
 
 .topbar-btn:active,

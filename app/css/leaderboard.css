@@ -1,10 +1,12 @@
 #leaderboard {
   width: 95%;
-  height: 90%;
+  height: 100%;
+  overflow-y: scroll;
+  border: solid gray 2px;
 }
 
 #leaderboard h2 {
-  margin: 0 !important;
+  margin: 3px !important;
 }
 
 #leaderboard ol {

@@ -1,11 +1,11 @@
 #rack {
   display: grid;
-  grid-template-columns: repeat(7, 5vw);
+  grid-template-columns: repeat(7, auto);
   justify-content: center;
 }
 
 .rack-letter {
-  background-color: beige;
+  background-color: #feebb5;
   height: 6vh;
   width: 6vh;
   border: solid black 1px;

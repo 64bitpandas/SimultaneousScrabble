@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../css/topbar.css';
+import logo from '../images/SS_Logo_Extended.png';
 import { emit, quitGame, registerTopbar, setError } from './Connection';
 
 export default class Topbar extends Component {
@@ -17,8 +18,12 @@ export default class Topbar extends Component {
   }
 
   render = () => (
-    <div id="topbar">
-      <h1>Simultaneous Scrabble</h1>
+    <div id="topbar" className={this.state.status}>
+      <span
+        className={this.state.status + ' progress'}
+        style={{ width: '' + this.getTimeRatio() * 100 + '%' }}
+      />
+      <img src={logo} alt="SimultaneousScrabble Logo" id="logo-img" />
       <div
         id="timer"
         className={this.state.time <= 15 && this.state.time > 0 ? 'low' : ''}
@@ -62,6 +67,16 @@ export default class Topbar extends Component {
   startGame = () => {
     // emit('joinRoom', { name: this.state.name, room: this.state.room });
     emit('startGame', { room: this.state.room });
+  };
+
+  getTimeRatio = () => {
+    if (this.state.status === 'playing') {
+      return this.state.time / 90;
+    }
+    if (this.state.status === 'challenging') {
+      return this.state.time / 30;
+    }
+    return 0;
   };
 }
 
