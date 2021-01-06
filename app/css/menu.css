@@ -7,6 +7,7 @@
   display: grid;
   grid-template-rows: 100vh;
   grid-template-columns: 100vw;
+  background-color: #fffaeb;
 }
 
 #main-panel {
@@ -14,6 +15,46 @@
   align-self: center;
   height: 70%;
   width: 70%;
+}
+
+.logo {
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+/* ************
+ * * FORM     *
+ * ************ */
+.field {
+  height: 40px;
+  width: 60%;
+  max-width: 500px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+.field input {
+  height: 100%;
+  /* position: absolute; */
+  border-radius: 0;
+  width: 70%;
+  border-color:  #003ca8;
+  border-style: solid;
+  padding: 5px;
+}
+
+.field .label {
+  background-color: #003ca8;
+  height: 100%;
+  width: 30%;
+  padding: 3px;
+  /* position: absolute; */
+  display: grid;
+  align-items: center;
+  text-align: center;
+  color: white;
+  font-size: 125%;
 }
 
 /* ************
@@ -24,18 +65,21 @@
   position: relative;
   margin: auto;
   margin-top: 10px;
-  width: 100%;
+  margin-bottom: 20px;
+  width: 70%;
+  max-width: 600px;
   height: 40px;
+  line-height: 40px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  font-size: large;
+  font-size: 150%;
   text-align: center;
   border: 0;
   cursor: pointer;
   border-radius: 5px 5px 5px 5px;
   -moz-border-radius: 5px 5px 5px 5px;
   -webkit-border-radius: 5px 5px 5px 5px;
-  margin-bottom: 10px;
+  text-decoration: none;
 }
 
 .button:active,
@@ -49,19 +93,19 @@
 
 .button:disabled {
   top: 0px !important;
-  background: #CCCCCC !important;
-  border-bottom: 2px solid #DDDDDD !important;
-  box-shadow: inset 0 -2px #DDDDDD !important;
-  -webkit-box-shadow: inset 0 #DDDDDD !important;
+  background: #cccccc !important;
+  border-bottom: 2px solid #dddddd !important;
+  box-shadow: inset 0 -2px #dddddd !important;
+  -webkit-box-shadow: inset 0 #dddddd !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
-  color: #BBBBBB !important;
+  color: #bbbbbb !important;
 }
 
 .btn-primary {
-  background: #0050C1;
-  border-bottom: 2px solid #003CA8;
-  box-shadow: inset 0 -2px #003CA8;
-  -webkit-box-shadow: inset 0 #003CA8;
+  background: #0050c1;
+  border-bottom: 2px solid #003ca8;
+  box-shadow: inset 0 -2px #003ca8;
+  -webkit-box-shadow: inset 0 #003ca8;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   color: white;
 }
@@ -69,4 +113,45 @@
 .btn-primary:active,
 .btn-primary:hover {
   background: rgb(45, 90, 228);
+}
+
+/* ************
+ * *   TABS   *
+ * ************ */
+.react-tabs {
+  border: solid black 2px;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  background-color: white;
+  box-shadow: 2px 9px 15px -7px #666666
+}
+
+.react-tabs__tab {
+  width: 50%;
+  border: none !important;
+  transition: all 0.25s ease-in-out;
+  bottom: 0;
+  text-align: center;
+  font-size: 150%;
+}
+
+.react-tabs__tab::after {
+  display: none !important;
+}
+
+.react-tabs__tab--selected {
+  background: rgb(120, 200, 255) !important;
+  border-radius: 0 !important;
+  font-weight: bold;
+}
+
+.react-tabs__tab-panel {
+  display: grid !important;
+  justify-items: center;
+  grid-gap: 20px;
+}
+
+.react-tabs__tab-panel h1 {
+  font-size: 300%;
 }

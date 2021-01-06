@@ -11,6 +11,7 @@ import { Redirect } from 'react-router-dom';
 // import { FormattedMessage } from 'react-intl';
 // import messages from './messages';
 import ChatClient from '../../components/ChatClient';
+import { Connection } from '../../components/Connection';
 import Gameboard from '../../components/Gameboard';
 import Leaderboard from '../../components/Leaderboard';
 import Rack from '../../components/Rack';
@@ -21,10 +22,29 @@ export default function GamePage(props) {
   if (props.location.state === undefined) {
     return <Redirect to="/" />;
   }
+
+  // if (getError() !== '') {
+  //   return (
+  //     <Redirect
+  //       to={{
+  //         pathname: '/',
+  //         state: {
+  //           name: props.location.state.name,
+  //           room: props.location.state.room,
+  //           error: getError(),
+  //         },
+  //       }}
+  //     />
+  //   );
+  // }
   return (
     <>
+      <Connection
+        name={props.location.state.name}
+        room={props.location.state.room}
+      />
       <Topbar
-        player={props.location.state.name}
+        name={props.location.state.name}
         room={props.location.state.room}
       />
       <div id="game">

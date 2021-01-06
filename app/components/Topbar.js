@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../css/topbar.css';
-import { emit, quitGame, registerTopbar } from './Connection';
+import { emit, quitGame, registerTopbar, setError } from './Connection';
 
 export default class Topbar extends Component {
   constructor(props) {
@@ -40,7 +40,10 @@ export default class Topbar extends Component {
           pathname: '/',
           state: { name: this.state.name, room: this.state.room },
         }}
-        onClick={quitGame}
+        onClick={() => {
+          setError('You have left the game.');
+          quitGame();
+        }}
       >
         Exit
       </Link>

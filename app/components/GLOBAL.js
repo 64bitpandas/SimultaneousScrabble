@@ -6,6 +6,8 @@ export const GLOBAL = {
   CHAT_ANNOUNCE_COLOR: '#abcdef',
   SMALL_BOARD_SIZE: 15,
   TILE: 'tile', // Accept type for drag and drop
+  MAX_NAME_LENGTH: 30, // character limit for usernames
+  TIMEOUT: 3000, // Time before dropping connection attempt, in ms
   LETTER_VALUES: {
     BLANK: 0,
     A: 1,

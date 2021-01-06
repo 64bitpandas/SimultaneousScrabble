@@ -1,4 +1,7 @@
+import React, { useState } from 'react';
+import { Redirect } from 'react-router-dom';
 import io from 'socket.io-client';
+import PropTypes from 'prop-types';
 import { GLOBAL } from './GLOBAL';
 
 let socket;
@@ -10,15 +13,53 @@ let mainpanel;
 let topbar;
 let currLetter = '';
 let dropped = false;
+let errorCache = '';
+let connected = false;
+let setErrorFunc;
+
+export const Connection = ({ name, room }) => {
+  const [error, setErr] = useState(errorCache);
+  setErrorFunc = setErr;
+
+  if (error !== '') {
+    setErrorFunc = undefined;
+    errorCache = '';
+    return (
+      <Redirect
+        to={{
+          pathname: '/',
+          state: {
+            name,
+            room,
+            error,
+          },
+        }}
+      />
+    );
+  }
+
+  return <span style={{ display: 'none' }} />;
+};
+
+Connection.propTypes = {
+  name: PropTypes.string,
+  room: PropTypes.string,
+};
 
 export function beginConnection(room, name, server) {
+  connected = false;
   socket = io.connect(server === '' ? GLOBAL.LOCALHOST : server, {
     query: `room=${room}&name=${name}`,
-    reconnectionAttempts: 3,
+    reconnectionAttempts: 1,
     transports: ['websocket', 'polling', 'flashsocket'],
   });
+  setTimeout(() => {
+    if (!connected) {
+      setError('Unable to connect to server');
+    }
+  }, GLOBAL.TIMEOUT);
   socket.on('connect', () => {
-    // console.log('conncect');
+    connected = true;
   });
   socket.on('serverSendPlayerChat', data => {
     if (chat) {
@@ -62,13 +103,14 @@ export function beginConnection(room, name, server) {
       data.players.length > 1
     ) {
       quitGame();
-      window.location = '/';
+      setError('You have been kicked');
     }
   });
   socket.on('serverSendJoinError', data => {
     if (mainpanel) {
       mainpanel.setState({ error: data.error });
     }
+    setError(data.error);
   });
   socket.on('serverSendChallengingTime', () => {
     if (gameboard) {
@@ -78,7 +120,8 @@ export function beginConnection(room, name, server) {
 }
 
 export function emit(event, data) {
-  socket.emit(event, data);
+  if (socket !== undefined) socket.emit(event, data);
+  // else error = 'Could not connect to server';
 }
 
 export function registerChat(c) {
@@ -109,6 +152,10 @@ export function submit() {
 }
 export function quitGame() {
   chat.appendMessage(`${chat.state.player} has left the game`, 'purple');
+  connected = false;
+  errorCache = '';
+  setErrorFunc('');
+  setErrorFunc = undefined;
   socket.disconnect();
 }
 export function getCurrLetter() {
@@ -122,4 +169,11 @@ export function setDropped(drop) {
 }
 export function getDropped() {
   return dropped;
+}
+export function setError(err) {
+  if (setErrorFunc !== undefined) {
+    setErrorFunc(err);
+  } else {
+    errorCache = err;
+  }
 }

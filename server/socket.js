@@ -10,13 +10,19 @@ const setupSocket = i => {
   i.on('connection', s => {
     io = i;
     const { name, room } = s.handshake.query;
-    if (
-      game.getData(room) !== undefined &&
-      game.getData(room).status !== 'waiting'
-    ) {
-      s.emit('serverSendJoinError', { error: 'Game in progress' });
-      return;
+    if (game.getData(room) !== undefined) {
+      if (game.getPlayerData(room, name) !== undefined) {
+        s.emit('serverSendJoinError', {
+          error: 'Name already taken in that room!',
+        });
+        return;
+      }
+      if (game.getData(room).status !== 'waiting') {
+        s.emit('serverSendJoinError', { error: 'Game in progress' });
+        return;
+      }
     }
+
     s.join(room);
     game.joinRoom(s, name, room);
     console.log('[Server] '.bold.blue + `${name} connected to ${room}`.green);
