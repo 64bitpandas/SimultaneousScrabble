@@ -8,16 +8,33 @@
 
 import React from 'react';
 import swal from 'sweetalert';
+import GitHubButton from 'react-github-btn';
 import { setError } from '../../components/Connection';
 // import { FormattedMessage } from 'react-intl';
 // import messages from './messages';
 import MainPanel from '../../components/MainPanel';
+import '../../css/menu.css';
 
 export default function HomePage(props) {
+  const ghBanner = (
+    <div className="github-banner">
+      <p>Check out the source on GitHub! </p>
+      <GitHubButton
+        href="https://github.com/64bitpandas/SimultaneousScrabble"
+        data-size="large"
+        data-show-count="true"
+        data-icon="octicon-star"
+        aria-label="Star 64bitpandas/SimultaneousScrabble on GitHub"
+      >
+        Star
+      </GitHubButton>
+    </div>
+  );
   if (props.location.state === undefined) {
     return (
       <div id="container">
         <MainPanel name="" room="" />
+        {ghBanner}
       </div>
     );
   }
@@ -34,6 +51,7 @@ export default function HomePage(props) {
         name={props.location.state.name}
         room={props.location.state.room}
       />
+      {ghBanner}
     </div>
   );
 }

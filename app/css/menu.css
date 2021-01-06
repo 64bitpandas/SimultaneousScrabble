@@ -28,6 +28,27 @@ h2 {
   font-size: 175%;
 }
 
+.github-banner {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 10px;
+  width: 350px;
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.github-banner p {
+  margin: 0;
+  display: grid;
+  align-items: center;
+  padding-bottom: 15px;
+  padding-right: 10px;
+  font-family: 'Ropa Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 /* ************
  * * FORM     *
  * ************ */
