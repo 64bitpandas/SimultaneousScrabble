@@ -41,4 +41,9 @@ export const GLOBAL = {
     Y: 4,
     Z: 10,
   },
+  INFO: `Simultaneous Scrabble is just like normal Scrabble, except everyone plays at the same time rather than taking turns!\n
+  This makes it great for speeding up gameplay, which is optimal for larger numbers of players.\n
+  The rules are the same as Scrabble otherwise- simply drag your tiles onto the board and hit submit to play.\n
+  During the CHALLENGING PHASE, you can challenge plays that you believe aren't actually words. If it wasn't, then the person who played it loses a turn. Otherwise, you lose a turn.\n
+  The game ends when all players use up all of their tiles.`,
 };

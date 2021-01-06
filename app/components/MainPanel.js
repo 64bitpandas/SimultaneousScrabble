@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import ReactTooltip from 'react-tooltip';
 import 'react-tabs/style/react-tabs.css';
+import swal from 'sweetalert';
 import logo from '../images/SS_Logo_Extended.png';
 
 import { beginConnection, registerMainPanel, setError } from './Connection';
@@ -116,6 +117,15 @@ export default class MainPanel extends Component {
           >
             Play
           </Link>
+          <button
+            className="button btn-about"
+            type="button"
+            onClick={() => {
+              swal('About SimultaneousScrabble', GLOBAL.INFO, 'info');
+            }}
+          >
+            About
+          </button>
         </TabPanel>
         <TabPanel>
           <h1>Create a Room</h1>
