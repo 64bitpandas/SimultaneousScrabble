@@ -39,9 +39,9 @@ require('colors');
  *      }
  *    ],
  *   options: {
- *     boardSize: number,
- *     bagSize: number,
- *     gameTime: number,
+ *     boardSize: string,
+ *     bagSize: string,
+ *     playTime: number,
  *     challengeTime: number,
  *     simultaneous: boolean,
  *   }
@@ -54,6 +54,9 @@ const data = {};
 const loops = {};
 
 const createRoom = (s, player, room, options) => {
+  const cleanedOptions = Object.assign({}, options);
+  cleanedOptions.playTime = parseInt(options.playTime, 10);
+  cleanedOptions.challengeTime = parseInt(options.challengeTime, 10);
   const defaultPlayer = {
     name: player,
     score: 0,
@@ -74,7 +77,7 @@ const createRoom = (s, player, room, options) => {
     bag: generateBag(constants.LETTERS[options.bagSize]),
     ready: [],
     round: 1,
-    options,
+    options: cleanedOptions,
   };
 };
 
@@ -104,7 +107,7 @@ const startGame = room => {
     data[room].players[i].letters.push(...drawTiles(room, player));
   }
   data[room].status = 'playing';
-  data[room].time = 90;
+  data[room].time = data[room].options.playTime;
   data[room].ready = [];
   console.log(`The game in room ${room} has started!`.magenta);
   socket.sendGlobalAnnouncement(room, `Round 1 begins.`, 'blue');
@@ -119,10 +122,19 @@ const gameLoop = room =>
       delete loops[room];
       return;
     }
-    data[room].time -= 1;
+    if (
+      (data[room].status === 'playing' && data[room].options.playTime !== 0) ||
+      (data[room].status === 'challenging' &&
+        data[room].options.challengeTime !== 0)
+    )
+      data[room].time -= 1;
 
     if (
-      data[room].time === 0 ||
+      (((data[room].status === 'playing' &&
+        data[room].options.playTime !== 0) ||
+        (data[room].status === 'challenging' &&
+          data[room].options.challengeTime !== 0)) &&
+        data[room].time === 0) ||
       data[room].ready.length === data[room].players.length
     ) {
       data[room].ready = [];
@@ -134,7 +146,7 @@ const gameLoop = room =>
           `Round ${data[room].round} has ended. Press ready to continue.`,
           'blue',
         );
-        data[room].time = 30;
+        data[room].time = data[room].options.challengeTime;
         data[room].round += 1;
         data[room].players.forEach((player, index) => {
           data[room].players[index].loseTurn = false;
@@ -187,7 +199,7 @@ const gameLoop = room =>
             } tiles remaining.`,
             'blue',
           );
-          data[room].time = 60;
+          data[room].time = data[room].options.playTime;
         }
         // for (let row = 0; row < data[room].board.length; row += 1) {
         //   for (let col = 0; col < data[room].board.length; col += 1) {

@@ -101,6 +101,8 @@ export function beginConnection(room, name, server, options, creating) {
       topbar.setState({
         time: data.time,
         status: data.status,
+        playTime: data.options.playTime,
+        challengeTime: data.options.challengeTime,
       });
     }
     if (

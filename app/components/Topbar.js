@@ -13,6 +13,8 @@ export default class Topbar extends Component {
       room: props.room,
       name: props.name,
       status: '',
+      playTime: 90,
+      challengeTime: 30,
     };
     registerTopbar(this);
   }
@@ -71,10 +73,14 @@ export default class Topbar extends Component {
 
   getTimeRatio = () => {
     if (this.state.status === 'playing') {
-      return this.state.time / 90;
+      return this.state.playTime === 0
+        ? 0
+        : this.state.time / this.state.playTime;
     }
     if (this.state.status === 'challenging') {
-      return this.state.time / 30;
+      return this.state.challengeTime === 0
+        ? 0
+        : this.state.time / this.state.challengeTime;
     }
     return 0;
   };

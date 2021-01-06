@@ -46,6 +46,12 @@ const setupSocket = i => {
     s.join(room);
 
     if (creating === 'true') {
+      if (!isNumeric(playTime) || !isNumeric(challengeTime)) {
+        s.emit('serverSendJoinError', {
+          error: `Make sure your timer values are non-negative integers.`,
+        });
+        return;
+      }
       game.createRoom(s, name, room, {
         boardSize,
         bagSize,
@@ -220,6 +226,8 @@ const emit = (socket, event, data) => {
 const globalEmit = (room, event, data) => {
   io.in(room).emit(event, data);
 };
+
+const isNumeric = value => /^\d+$/.test(value);
 
 exports.emit = emit;
 exports.setupSocket = setupSocket;
