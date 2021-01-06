@@ -372,7 +372,6 @@ export default class MainPanel extends Component {
   };
 
   startGame = creating => {
-    console.log(creating);
     // emit('joinRoom', { name: this.state.name, room: this.state.room });
     if (this.state.name === '') {
       setError('Please enter a name.');

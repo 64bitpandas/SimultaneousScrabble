@@ -33,6 +33,7 @@ export default class Gameboard extends Component {
           space={square}
           name={this.state.name}
           canPlace={this.state.canPlace}
+          options={this.state.options}
         />
       )),
     );

@@ -5,7 +5,7 @@ import '../css/gameboard.css';
 import { getGameboard, getCurrLetter, setDropped } from './Connection';
 import { GLOBAL } from './GLOBAL';
 
-export const BoardSquare = ({ space, name, canPlace }) => {
+export const BoardSquare = ({ space, name, canPlace, options }) => {
   const [hover, setHover] = useState(false);
   const [, drop] = useDrop({
     accept: GLOBAL.TILE,
@@ -57,7 +57,7 @@ export const BoardSquare = ({ space, name, canPlace }) => {
       tabIndex={space.id}
     >
       {space.letter === '' && space.modifier !== 'CENTER' && (
-        <p className="modifier">{space.modifier}</p>
+        <p className={'modifier ' + options.boardSize}>{space.modifier}</p>
       )}
       {hover && !(canPlace && space.letter === '') && (
         <div className="overlay-bad" />
@@ -67,13 +67,17 @@ export const BoardSquare = ({ space, name, canPlace }) => {
       )}
       {/* {isOver && !canDrop && <div className="overlay-bad" />}
       {isOver && canDrop && <div className="overlay-good" />} */}
-      {space.temp && <FilledSquare letter={space.letter} id={space.id} />}
-      {!space.temp && space.letter && squareHTML(space.letter, space.color)}
+      {space.temp && (
+        <FilledSquare letter={space.letter} id={space.id} options={options} />
+      )}
+      {!space.temp &&
+        space.letter &&
+        squareHTML(space.letter, space.color, options.boardSize)}
     </div>
   );
 };
 
-const FilledSquare = ({ letter, id }) => {
+const FilledSquare = ({ letter, id, options }) => {
   const [, drag] = useDrag({
     item: { type: GLOBAL.TILE, letter },
     collect: monitor => ({
@@ -84,15 +88,15 @@ const FilledSquare = ({ letter, id }) => {
       getGameboard().tempRemove(id, !monitor.didDrop());
     },
   });
-  return squareHTML(letter, 'red', drag);
+  return squareHTML(letter, 'red', options.boardSize, drag);
 };
 
-const squareHTML = (letter, color, ref) => (
+const squareHTML = (letter, color, size, ref) => (
   <div className="board-square" ref={ref}>
-    <div className={'letter ' + color}>
+    <div className={'letter ' + color + ' ' + size}>
       {letter.includes('BLANK') ? letter.substring(6) : letter}
     </div>
-    <div className={'letter-score ' + color}>
+    <div className={'letter-score ' + color + ' ' + size}>
       {letter.includes('BLANK') ? '*' : GLOBAL.LETTER_VALUES[letter]}
     </div>
   </div>
@@ -102,4 +106,5 @@ BoardSquare.propTypes = {
   space: PropTypes.object,
   name: PropTypes.string,
   canPlace: PropTypes.bool,
+  options: PropTypes.object,
 };
