@@ -46,10 +46,14 @@ Connection.propTypes = {
   room: PropTypes.string,
 };
 
-export function beginConnection(room, name, server) {
+export function beginConnection(room, name, server, options, creating) {
   connected = false;
+  let query = `room=${room}&name=${name}&creating=${creating}`;
+  Object.keys(options).forEach(option => {
+    query += `&${option}=${options[option]}`;
+  });
   socket = io.connect(server === '' ? GLOBAL.LOCALHOST : server, {
-    query: `room=${room}&name=${name}`,
+    query,
     reconnectionAttempts: 1,
     transports: ['websocket', 'polling', 'flashsocket'],
   });
@@ -84,6 +88,8 @@ export function beginConnection(room, name, server) {
         canPlace:
           data.status === 'playing' &&
           !data.players.filter(player => player.name === name)[0].loseTurn,
+        options: data.options,
+        size: GLOBAL.SIZE[data.options.boardSize],
       });
     }
     if (rack) {

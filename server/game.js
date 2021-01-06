@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 const socket = require('./socket');
 const twl = require('./data/twl.json');
+const constants = require('./constants.js');
 
 require('colors');
 
@@ -36,7 +37,14 @@ require('colors');
  *        loseTurn: boolean,
  *        kick: [string array],
  *      }
- *    ]
+ *    ],
+ *   options: {
+ *     boardSize: number,
+ *     bagSize: number,
+ *     gameTime: number,
+ *     challengeTime: number,
+ *     simultaneous: boolean,
+ *   }
  * }
  */
 const data = {};
@@ -45,99 +53,29 @@ const data = {};
 // Destroy the interval when the game ends.
 const loops = {};
 
-const SIZE = 15;
+const createRoom = (s, player, room, options) => {
+  const defaultPlayer = {
+    name: player,
+    score: 0,
+    words: [],
+    letters: [],
+    loseTurn: false,
+    kick: [],
+  };
 
-const LETTERS = {
-  A: [1, 9],
-  B: [3, 2],
-  C: [3, 2],
-  D: [2, 4],
-  E: [1, 12],
-  F: [4, 2],
-  G: [2, 3],
-  H: [4, 2],
-  I: [1, 9],
-  J: [8, 1],
-  K: [5, 1],
-  L: [1, 4],
-  M: [3, 2],
-  N: [1, 6],
-  O: [1, 8],
-  P: [3, 2],
-  Q: [10, 1],
-  R: [1, 6],
-  S: [1, 4],
-  T: [1, 6],
-  U: [1, 4],
-  V: [4, 2],
-  W: [4, 2],
-  X: [8, 1],
-  Y: [4, 2],
-  Z: [10, 1],
-  BLANK: [0, 2],
-};
-
-const SPECIALS = {
-  TW: [[0, 0], [0, 7], [0, 14], [7, 0], [7, 14], [14, 0], [14, 7], [14, 14]],
-  DW: [
-    [1, 1],
-    [2, 2],
-    [3, 3],
-    [4, 4],
-    [10, 10],
-    [11, 11],
-    [12, 12],
-    [13, 13],
-    [13, 1],
-    [12, 2],
-    [11, 3],
-    [10, 4],
-    [1, 13],
-    [2, 12],
-    [3, 11],
-    [4, 10],
-  ],
-  DL: [
-    [0, 3],
-    [0, 11],
-    [14, 3],
-    [14, 11],
-    [3, 0],
-    [11, 0],
-    [3, 14],
-    [11, 14],
-    [6, 2],
-    [7, 3],
-    [8, 2],
-    [2, 6],
-    [3, 7],
-    [2, 8],
-    [6, 12],
-    [7, 11],
-    [8, 12],
-    [12, 6],
-    [11, 7],
-    [12, 8],
-    [6, 6],
-    [6, 8],
-    [8, 6],
-    [8, 8],
-  ],
-  TL: [
-    [5, 1],
-    [9, 1],
-    [1, 5],
-    [1, 9],
-    [13, 5],
-    [13, 9],
-    [9, 13],
-    [5, 13],
-    [5, 9],
-    [5, 5],
-    [9, 9],
-    [9, 5],
-  ],
-  CENTER: [[7, 7]],
+  data[room] = {
+    board: generateBoard(
+      constants.SIZE[options.boardSize],
+      constants.SPECIALS[options.boardSize],
+    ),
+    players: [defaultPlayer],
+    status: 'waiting',
+    time: 0,
+    bag: generateBag(constants.LETTERS[options.bagSize]),
+    ready: [],
+    round: 1,
+    options,
+  };
 };
 
 const joinRoom = (s, player, room) => {
@@ -150,18 +88,7 @@ const joinRoom = (s, player, room) => {
     kick: [],
   };
 
-  if (!data[room]) {
-    data[room] = {
-      board: generateBoard(SIZE, SPECIALS),
-      players: [defaultPlayer],
-      status: 'waiting',
-      time: 0,
-      bag: generateBag(LETTERS),
-      ready: [],
-      round: 1,
-    };
-    console.log(`New room created: ${room}`.cyan);
-  } else if (data[room].status === 'waiting') {
+  if (data[room].status === 'waiting') {
     data[room].players.push(defaultPlayer);
   } else {
     socket.emit(s, 'serverSendJoinError', {
@@ -519,7 +446,7 @@ const generateWords = (board, row, col, visited) => {
   const getPts = (r, c, horiz) => {
     let pts = board[r][c].letter.includes('BLANK')
       ? 0
-      : LETTERS[board[r][c].letter][0];
+      : constants.LETTERS['75'][board[r][c].letter][0];
     if (board[r][c].used) {
       // console.log(`${board[r][c].letter} was worth ${pts} points USED`);
       return pts;
@@ -711,6 +638,7 @@ const cleanLetter = letter =>
   letter.includes('BLANK') ? letter.substring(6) : letter;
 
 exports.joinRoom = joinRoom;
+exports.createRoom = createRoom;
 exports.getData = getData;
 exports.setLetters = setLetters;
 exports.setPlayerData = setPlayerData;

@@ -4,7 +4,11 @@ export const GLOBAL = {
   PLACEHOLDER_NAME: 'Unknown Player',
   CHAT_COLOR: '#FFFFFF',
   CHAT_ANNOUNCE_COLOR: '#abcdef',
-  SMALL_BOARD_SIZE: 15,
+  SIZE: {
+    S: 11,
+    M: 15,
+    L: 19,
+  },
   TILE: 'tile', // Accept type for drag and drop
   MAX_NAME_LENGTH: 30, // character limit for usernames
   TIMEOUT: 3000, // Time before dropping connection attempt, in ms

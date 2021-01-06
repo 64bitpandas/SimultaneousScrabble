@@ -112,7 +112,7 @@ export default class MainPanel extends Component {
             }}
             id="startButton"
             className="button btn-primary"
-            onClick={this.startGame}
+            onClick={() => this.startGame(false)}
           >
             Play
           </Link>
@@ -326,10 +326,7 @@ export default class MainPanel extends Component {
               value={this.state.options.playTime}
             />
           </div>
-          <div
-            className="field"
-            style={this.state.options.simultaneous ? {} : { display: 'none' }}
-          >
+          <div className="field">
             <span
               className="label option-label"
               data-tip="Time (in seconds) between rounds. Set to 0 to disable timer."
@@ -356,7 +353,7 @@ export default class MainPanel extends Component {
             }}
             id="createButton"
             className="button btn-create"
-            onClick={this.startGame}
+            onClick={() => this.startGame(true)}
           >
             Create Room
           </Link>
@@ -374,15 +371,21 @@ export default class MainPanel extends Component {
     }));
   };
 
-  startGame = () => {
-    console.log(this.state);
+  startGame = creating => {
+    console.log(creating);
     // emit('joinRoom', { name: this.state.name, room: this.state.room });
     if (this.state.name === '') {
       setError('Please enter a name.');
     } else if (this.state.room === '') {
       setError('Please enter a room name.');
     } else {
-      beginConnection(this.state.room, this.state.name, this.state.server);
+      beginConnection(
+        this.state.room,
+        this.state.name,
+        this.state.server,
+        this.state.options,
+        creating,
+      );
     }
   };
 }

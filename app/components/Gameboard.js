@@ -12,12 +12,18 @@ export default class Gameboard extends Component {
       name: props.name,
       board: [],
       canPlace: false,
+      options: {},
+      size: GLOBAL.SIZE.M,
     };
     registerGameboard(this);
     emit('forceUpdate', {});
   }
 
-  render = () => <div id="gameboard">{this.renderBoard()}</div>;
+  render = () => (
+    <div id="gameboard" className={this.state.options.boardSize}>
+      {this.renderBoard()}
+    </div>
+  );
 
   renderBoard = () =>
     this.state.board.map(row =>
@@ -46,7 +52,7 @@ export default class Gameboard extends Component {
                 newBoard[row][col].owner !== oldBoard.board[row][col].owner
               ) {
                 // someone placed a letter over temp letter
-                this.tempRemove(row * GLOBAL.SMALL_BOARD_SIZE + col, true);
+                this.tempRemove(row * oldBoard.size + col, true);
               }
               updatedBoard[row][col] = newBoard[row][col];
             }
@@ -84,8 +90,8 @@ export default class Gameboard extends Component {
   };
 
   tempRemoveAll = () => {
-    for (let row = 0; row < GLOBAL.SMALL_BOARD_SIZE; row += 1) {
-      for (let col = 0; col < GLOBAL.SMALL_BOARD_SIZE; col += 1) {
+    for (let row = 0; row < this.state.size; row += 1) {
+      for (let col = 0; col < this.state.size; col += 1) {
         if (this.state.board[row][col].temp) {
           this.tempRemove(this.id(row, col), true);
         }
@@ -93,12 +99,9 @@ export default class Gameboard extends Component {
     }
   };
 
-  id = (row, col) => row * GLOBAL.SMALL_BOARD_SIZE + col;
+  id = (row, col) => row * this.state.size + col;
 
-  rowCol = id => [
-    Math.floor(id / GLOBAL.SMALL_BOARD_SIZE),
-    id % GLOBAL.SMALL_BOARD_SIZE,
-  ];
+  rowCol = id => [Math.floor(id / this.state.size), id % this.state.size];
 }
 
 Gameboard.propTypes = {

@@ -9,11 +9,20 @@ let io;
 const setupSocket = i => {
   i.on('connection', s => {
     io = i;
-    const { name, room } = s.handshake.query;
+    const {
+      name,
+      room,
+      creating,
+      boardSize,
+      bagSize,
+      playTime,
+      challengeTime,
+      simultaneous,
+    } = s.handshake.query;
     if (game.getData(room) !== undefined) {
       if (game.getPlayerData(room, name) !== undefined) {
         s.emit('serverSendJoinError', {
-          error: 'Name already taken in that room!',
+          error: `The name ${name} is already taken in that room!`,
         });
         return;
       }
@@ -21,12 +30,36 @@ const setupSocket = i => {
         s.emit('serverSendJoinError', { error: 'Game in progress' });
         return;
       }
+      if (creating === 'true') {
+        s.emit('serverSendJoinError', {
+          error: 'Room already exists!',
+        });
+        return;
+      }
+    } else if (creating === 'false') {
+      s.emit('serverSendJoinError', {
+        error: `The room ${room} does not exist!`,
+      });
+      return;
     }
 
     s.join(room);
-    game.joinRoom(s, name, room);
+
+    if (creating === 'true') {
+      game.createRoom(s, name, room, {
+        boardSize,
+        bagSize,
+        playTime,
+        challengeTime,
+        simultaneous,
+      });
+      console.log(`[Server] `.bold.blue + `${room} was created`.green);
+    } else {
+      game.joinRoom(s, name, room);
+    }
     console.log('[Server] '.bold.blue + `${name} connected to ${room}`.green);
     s.to(room).broadcast.emit('serverSendLoginMessage', { player: name });
+
     s.to(room).on('playerChat', data => {
       const sender = data.sender.replace(/(<([^>]+)>)/gi, '');
       const message = data.message.replace(/(<([^>]+)>)/gi, '');
