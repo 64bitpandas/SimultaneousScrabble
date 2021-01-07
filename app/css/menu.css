@@ -46,7 +46,7 @@ h1 {
   align-items: center;
 }
 
-.github-banner p {
+.github-banner a {
   margin: 0;
   display: grid;
   align-items: center;

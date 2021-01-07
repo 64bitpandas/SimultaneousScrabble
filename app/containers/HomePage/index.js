@@ -18,7 +18,12 @@ import '../../css/menu.css';
 export default function HomePage(props) {
   const ghBanner = (
     <div className="github-banner">
-      <p>Check out the source on GitHub! </p>
+      <a
+        href="https://github.com/64bitpandas/SimultaneousScrabble"
+        target="_blank"
+      >
+        Check out the source on GitHub!{' '}
+      </a>
       <GitHubButton
         href="https://github.com/64bitpandas/SimultaneousScrabble"
         data-size="large"
