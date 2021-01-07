@@ -5,12 +5,14 @@
 }
 
 .rack-letter {
-  background-color: #feebb5;
+  background-color: #e3b17f;
   height: 6vh;
   width: 6vh;
-  border: solid black 1px;
+  /* border: solid black 3px; */
+  border-radius: 7px;
   margin: 3px;
   padding: 1px;
+  padding-left: 5px;
   font-size: 200%;
   position: relative;
   user-select: none;
