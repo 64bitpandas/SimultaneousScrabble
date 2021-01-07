@@ -85,6 +85,9 @@ const LETTERS_150 = {
   Z: [10, 2],
   BLANK: [0, 3],
 };
+const LETTERS_TEST = {
+  A: [1, 7],
+};
 
 const SPECIALS_S = {
   TW: [[0, 0], [0, 5], [0, 10], [5, 0], [5, 10], [10, 0], [10, 5], [10, 10]],
@@ -267,6 +270,7 @@ exports.LETTERS = {
   75: LETTERS_75,
   100: LETTERS_100,
   150: LETTERS_150,
+  TEST: LETTERS_TEST,
 };
 exports.SPECIALS = {
   S: SPECIALS_S,

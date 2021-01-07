@@ -74,7 +74,8 @@ const createRoom = (s, player, room, options) => {
     players: [defaultPlayer],
     status: 'waiting',
     time: 0,
-    bag: generateBag(constants.LETTERS[options.bagSize]),
+    // bag: generateBag(constants.LETTERS[options.bagSize]),
+    bag: generateBag(constants.LETTERS.TEST),
     ready: [],
     round: 1,
     options: cleanedOptions,
@@ -154,7 +155,7 @@ const gameLoop = room =>
         data[room].players.sort((a, b) => b.score - a.score);
       } else if (data[room].status === 'challenging') {
         data[room].status = 'playing';
-        let notGameOver = false;
+        let gameOverIndex = -1;
         for (let i = 0; i < data[room].players.length; i += 1) {
           const player = data[room].players[i];
           data[room].players[i].lastTurn = [];
@@ -173,8 +174,8 @@ const gameLoop = room =>
               }
             }
           });
-          if (data[room].players[i].letters.length > 0) {
-            notGameOver = true;
+          if (data[room].players[i].letters.length === 0) {
+            gameOverIndex = i;
           }
         }
 
@@ -183,14 +184,23 @@ const gameLoop = room =>
           `Tiles remaining in ${room}: ${data[room].bag.length}`.blue,
         );
 
-        if (!notGameOver) {
-          data[room].status = 'gameOver';
+        if (gameOverIndex >= 0) {
+          data[room].status = 'Game Over!';
           socket.sendGlobalAnnouncement(
             room,
             `Game over! ${data[room].players[0].name} wins with ${
               data[room].players[0].score
             } points!`,
           );
+
+          socket.globalEmit(room, 'serverSendGameOver', {
+            winners: data[room].players
+              .filter(player => player.score === data[room].players[0].score)
+              .map(player => player.name)
+              .join(' and '),
+            score: data[room].players[0].score,
+            last: data[room].players[gameOverIndex].name,
+          });
         } else {
           socket.sendGlobalAnnouncement(
             room,

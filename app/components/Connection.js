@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import io from 'socket.io-client';
 import PropTypes from 'prop-types';
+import swal from 'sweetalert';
 import { GLOBAL } from './GLOBAL';
 
 let socket;
@@ -124,6 +125,15 @@ export function beginConnection(room, name, server, options, creating) {
     if (gameboard) {
       gameboard.tempRemoveAll();
     }
+  });
+  socket.on('serverSendGameOver', data => {
+    swal(
+      'Game Over!',
+      `${data.last} used all of their tiles, so ${
+        data.winners
+      } won the game with ${data.score} points!`,
+      'success',
+    );
   });
 }
 
