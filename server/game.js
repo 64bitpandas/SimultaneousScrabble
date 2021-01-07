@@ -13,6 +13,7 @@ require('colors');
  *    bag: string,
  *    ready: [string array],
  *    round: number,
+ *    currPlaying?: number,
  *    board: [[
  *      {
  *        id: number,
@@ -35,6 +36,7 @@ require('colors');
  *        }],
  *        letters: [string array],
  *        loseTurn: boolean,
+ *        isTurn: boolean,
  *        kick: [string array],
  *      }
  *    ],
@@ -57,6 +59,7 @@ const createRoom = (s, player, room, options) => {
   const cleanedOptions = Object.assign({}, options);
   cleanedOptions.playTime = parseInt(options.playTime, 10);
   cleanedOptions.challengeTime = parseInt(options.challengeTime, 10);
+  cleanedOptions.simultaneous = options.simultaneous === 'true';
   const defaultPlayer = {
     name: player,
     score: 0,
@@ -74,8 +77,8 @@ const createRoom = (s, player, room, options) => {
     players: [defaultPlayer],
     status: 'waiting',
     time: 0,
-    // bag: generateBag(constants.LETTERS[options.bagSize]),
-    bag: generateBag(constants.LETTERS.TEST),
+    bag: generateBag(constants.LETTERS[options.bagSize]),
+    // bag: generateBag(constants.LETTERS.TEST),
     ready: [],
     round: 1,
     options: cleanedOptions,
@@ -112,9 +115,20 @@ const startGame = room => {
   data[room].ready = [];
   console.log(`The game in room ${room} has started!`.magenta);
   socket.sendGlobalAnnouncement(room, `Round 1 begins.`, 'blue');
+  if (!data[room].options.simultaneous) {
+    data[room].options.order = data[room].players.map(player => player.name);
+    data[room].currPlaying = 0;
+    socket.sendGlobalAnnouncement(
+      room,
+      `It's ${getCurrPlayer(room)}'s turn!`,
+      'green',
+    );
+  }
   socket.sendUpdate(room, data[room]);
   loops[room] = gameLoop(room);
 };
+
+const getCurrPlayer = room => data[room].options.order[data[room].currPlaying];
 
 const gameLoop = room =>
   setInterval(() => {
@@ -136,23 +150,45 @@ const gameLoop = room =>
         (data[room].status === 'challenging' &&
           data[room].options.challengeTime !== 0)) &&
         data[room].time === 0) ||
-      data[room].ready.length === data[room].players.length
+      data[room].ready.length === data[room].players.length ||
+      (!data[room].options.simultaneous &&
+        data[room].status === 'playing' &&
+        data[room].ready.includes(getCurrPlayer(room)))
     ) {
       data[room].ready = [];
       if (data[room].status === 'playing') {
-        data[room].status = 'challenging';
-        socket.globalEmit(room, 'serverSendChallengingTime');
-        socket.sendGlobalAnnouncement(
-          room,
-          `Round ${data[room].round} has ended. Press ready to continue.`,
-          'blue',
-        );
-        data[room].time = data[room].options.challengeTime;
-        data[room].round += 1;
-        data[room].players.forEach((player, index) => {
-          data[room].players[index].loseTurn = false;
-        });
-        data[room].players.sort((a, b) => b.score - a.score);
+        if (!data[room].options.simultaneous) {
+          data[room].currPlaying += 1;
+        }
+
+        if (
+          data[room].options.simultaneous ||
+          data[room].currPlaying >= data[room].players.length
+        ) {
+          data[room].status = 'challenging';
+          data[room].currPlaying = 0;
+          socket.globalEmit(room, 'serverSendChallengingTime');
+          socket.sendGlobalAnnouncement(
+            room,
+            `Round ${data[room].round} has ended. Press ready to continue.`,
+            'blue',
+          );
+          data[room].time = data[room].options.challengeTime;
+          data[room].round += 1;
+          data[room].players.forEach((player, index) => {
+            data[room].players[index].loseTurn = false;
+          });
+          data[room].players.sort((a, b) => b.score - a.score);
+        } else {
+          socket.sendGlobalAnnouncement(
+            room,
+            `${
+              data[room].options.order[data[room].currPlaying - 1]
+            } has finished their turn! It's ${getCurrPlayer(room)}'s turn now.`,
+            'green',
+          );
+          data[room].time = data[room].options.playTime;
+        }
       } else if (data[room].status === 'challenging') {
         data[room].status = 'playing';
         let gameOverIndex = -1;
@@ -302,6 +338,11 @@ const generateBag = letters => {
 const validateBoard = (s, board, player, room) => {
   if (data[room].ready.includes(player) || data[room].status !== 'playing') {
     socket.sendError(s, `You cannot submit at this time.`);
+    return false;
+  }
+
+  if (!data[room].options.simultaneous && getCurrPlayer(room) !== player) {
+    socket.sendError(s, `It's not your turn right now!`);
     return false;
   }
 

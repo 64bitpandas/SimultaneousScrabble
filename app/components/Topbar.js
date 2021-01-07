@@ -13,6 +13,8 @@ export default class Topbar extends Component {
       room: props.room,
       name: props.name,
       status: '',
+      currPlaying: '',
+      simultaneous: true,
       playTime: 90,
       challengeTime: 30,
     };
@@ -20,9 +22,9 @@ export default class Topbar extends Component {
   }
 
   render = () => (
-    <div id="topbar" className={this.state.status}>
+    <div id="topbar" className={this.state.status + this.getNotTurn()}>
       <span
-        className={this.state.status + ' progress'}
+        className={this.state.status + ' progress' + this.getNotTurn()}
         style={{ width: '' + this.getTimeRatio() * 100 + '%' }}
       />
       <img src={logo} alt="SimultaneousScrabble Logo" id="logo-img" />
@@ -30,7 +32,12 @@ export default class Topbar extends Component {
         id="timer"
         className={this.state.time <= 15 && this.state.time > 0 ? 'low' : ''}
       >
-        {this.formattedTime()} · {this.state.status}
+        {this.formattedTime()} ·{' '}
+        {!this.state.simultaneous &&
+        this.state.currPlaying !== this.state.name &&
+        this.state.status === 'playing'
+          ? `${this.state.currPlaying}'s turn`
+          : this.state.status}
       </div>
       {this.state.status === 'waiting' && (
         <button
@@ -84,6 +91,13 @@ export default class Topbar extends Component {
     }
     return 0;
   };
+
+  getNotTurn = () =>
+    !this.state.simultaneous &&
+    this.state.currPlaying !== this.state.name &&
+    this.state.status === 'playing'
+      ? ' notyourturn'
+      : '';
 }
 
 Topbar.propTypes = {

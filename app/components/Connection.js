@@ -104,6 +104,13 @@ export function beginConnection(room, name, server, options, creating) {
         status: data.status,
         playTime: data.options.playTime,
         challengeTime: data.options.challengeTime,
+        simultaneous: data.options.simultaneous,
+        currPlaying:
+          data.options.simultaneous ||
+          data.status !== 'playing' ||
+          data.options.order === undefined
+            ? ''
+            : data.options.order[data.currPlaying],
       });
     }
     if (

@@ -14,6 +14,10 @@
   background-color: #a3ff87;
 }
 
+#topbar.notyourturn {
+  background-color: #8EBEF5;
+}
+
 #topbar.challenging {
   background-color: #ffaf47;
 }
@@ -33,6 +37,10 @@
 
 .progress.challenging {
   background-color: #ed8421;
+}
+
+.progress.notyourturn {
+  background-color: #4361EE;
 }
 
 #logo-img {
