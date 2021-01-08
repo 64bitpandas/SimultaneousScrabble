@@ -113,7 +113,7 @@ const startGame = room => {
   data[room].status = 'playing';
   data[room].time = data[room].options.playTime;
   data[room].ready = [];
-  console.log(`The game in room ${room} has started!`.magenta);
+  socket.serverLog(`The game in room ${room} has started!`.magenta);
   socket.sendGlobalAnnouncement(room, `Round 1 begins.`, 'blue');
   if (!data[room].options.simultaneous) {
     data[room].options.order = data[room].players.map(player => player.name);
@@ -216,9 +216,9 @@ const gameLoop = room =>
         }
 
         data[room].players.sort((a, b) => b.score - a.score);
-        console.log(
-          `Tiles remaining in ${room}: ${data[room].bag.length}`.blue,
-        );
+        // console.log(
+        //   `Tiles remaining in ${room}: ${data[room].bag.length}`.blue,
+        // );
 
         if (gameOverIndex >= 0) {
           data[room].status = 'Game Over!';
@@ -315,7 +315,7 @@ const deletePlayer = (room, player) => {
       item => item.name !== player,
     );
     if (data[room].players.length === 0) {
-      console.log(`Room ${room} was deleted`.red);
+      socket.serverLog(`Room ${room} was deleted`.red);
       delete data[room];
     }
   }
@@ -409,7 +409,7 @@ const validateBoard = (s, board, player, room) => {
   }
 
   words.forEach(word => {
-    console.log(`${player} played ${word.word} for ${word.points} points`.cyan);
+    // console.log(`${player} played ${word.word} for ${word.points} points`.cyan);
     socket.sendGlobalAnnouncement(
       room,
       `${player} played ${word.word} for ${word.points} points`,

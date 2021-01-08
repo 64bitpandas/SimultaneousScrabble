@@ -6,6 +6,10 @@ const game = require('./game');
 
 let io;
 
+const serverLog = msg => {
+  console.log(`[Server] `.bold.blue + msg);
+};
+
 const setupSocket = i => {
   i.on('connection', s => {
     io = i;
@@ -59,22 +63,22 @@ const setupSocket = i => {
         challengeTime,
         simultaneous,
       });
-      console.log(`[Server] `.bold.blue + `${room} was created`.green);
+      serverLog(`${room} was created`.green);
     } else {
       game.joinRoom(s, name, room);
     }
-    console.log('[Server] '.bold.blue + `${name} connected to ${room}`.green);
+    serverLog(`${name} connected to ${room}`.cyan);
     s.to(room).broadcast.emit('serverSendLoginMessage', { player: name });
 
     s.to(room).on('playerChat', data => {
       const sender = data.sender.replace(/(<([^>]+)>)/gi, '');
       const message = data.message.replace(/(<([^>]+)>)/gi, '');
 
-      console.log(
-        '[CHAT] '.bold.blue +
-          `${new Date().getHours()}:${new Date().getMinutes()} ${sender}: ${message}`
-            .magenta,
-      );
+      // console.log(
+      //   '[CHAT] '.bold.blue +
+      //     `${new Date().getHours()}:${new Date().getMinutes()} ${sender}: ${message}`
+      //       .magenta,
+      // );
 
       s.to(room).broadcast.emit('serverSendPlayerChat', {
         sender,
@@ -99,7 +103,6 @@ const setupSocket = i => {
     });
 
     s.to(room).on('setBlank', data => {
-      console.log('setblank');
       const letters = [...game.getPlayerData(room, data.player).letters];
       letters[data.index] = 'BLANK_' + data.letter.toUpperCase();
       game.setLetters(room, data.player, letters);
@@ -140,7 +143,6 @@ const setupSocket = i => {
     });
     s.on('challenge', data => {
       if (game.getData(room).status === 'challenging') {
-        console.log(data.you);
         if (data.you !== data.them) {
           sendGlobalAnnouncement(
             room,
@@ -187,7 +189,7 @@ const setupSocket = i => {
         msg: `${name} has left the game`,
         color: 'red',
       });
-      console.log(`${name} has left ${room}`.yellow);
+      // console.log(`${name} has left ${room}`.yellow);
       game.deletePlayer(room, name);
     });
   });
@@ -236,3 +238,4 @@ exports.sendError = sendError;
 exports.sendAnnouncement = sendAnnouncement;
 exports.sendGlobalAnnouncement = sendGlobalAnnouncement;
 exports.globalEmit = globalEmit;
+exports.serverLog = serverLog;
