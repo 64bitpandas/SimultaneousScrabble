@@ -24,7 +24,7 @@ app.use((req, res, next) => {
   );
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
-});
+}, express.static(__dirname, { dotfiles: 'allow' }));
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
