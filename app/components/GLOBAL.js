@@ -1,7 +1,7 @@
 export const GLOBAL = {
   CMD_PREFIX: '-', // Prefix for chat commands
-  LOCALHOST: 'localhost:3001',
-  MAIN_SERVER: 'scrabbleserver.bencuan.me:3001',
+  LOCALHOST: 'localhost:3000',
+  MAIN_SERVER: 'scrabbleserver.bencuan.me',
   PLACEHOLDER_NAME: 'Unknown Player',
   CHAT_COLOR: '#FFFFFF',
   CHAT_ANNOUNCE_COLOR: '#abcdef',

@@ -1,5 +1,7 @@
 ![SimultaneousScrabble Logo](app/images/SS_Logo_Extended.png)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/acdf0ed5-a24a-416d-83f6-7a39e05aff90/deploy-status)](https://app.netlify.com/sites/simultaneous-scrabble/deploys)
+
 ## Overview
 Simultaneous Scrabble is a concept for an online multiplayer game for 2-10 players. Its pace of play is significantly faster than normal scrabble, making it more accessible in a casual or party setting.
 
@@ -36,7 +38,7 @@ If no challenges need to be made, players can press the 'Ready' button to advanc
 | ----------- | ----------- |
 | Name      | Your username.    |
 | Room   | The name of the room. Players will enter this in to connect.      |
-| Server   | If connecting to localhost or a custom server, you can optionally enter in an address here (it should be in form `<your server name here>:3001`).     |
+| Server   | If connecting to localhost or a custom server, you can optionally enter in an address here (it should be in form `<your server name here>:3000`).     |
 | Play Style  | In **Simultaneous Mode**, all players make their moves at the same time. **Turn-Based Mode** is similar to traditional Scrabble. Simultaneous is strongly recommended for larger games (>4 players). |
 | Board Size     | **Standard** is a traditional Scrabble board layout (15x15). **Small** is 11x11 and **Large** is 19x19. Small and Large have custom modifier layouts. |
 | Number of Tiles | The number of tiles in the bag (normal Scrabble has 100 tiles). The game ends when all tiles are used. |
@@ -57,7 +59,15 @@ Make sure that you have `nodejs` installed.
 
 4. If doing frontend development, you can instead run `npx node server` which will hot-reload any frontend changes (but not backend changes).
 
-By default, the frontend is served to `localhost:3000` and the backend listens to `localhost:3001`. Navigate to `localhost:3000` to play! (**Note that you will need to enter `DEBUG` or `localhost` into the 'Server' box to avoid connecting to the main server.**)
+By default, the frontend is served to `localhost:3001` and the backend listens to `localhost:3000`. Navigate to `localhost:3001` to play! (**Note that you will need to enter `DEBUG` or `localhost` into the 'Server' box to avoid connecting to the main server.**)
+
+## Deployment
+
+The app is best deployed with separate handling for frontend and backend.
+
+For the frontend, run `npm run build` and the app should be available to you in the `build/` folder.
+
+For the backend, `npm start` is good enough. The backend will automatically bind to available ports (if the `PORT` variable is set), and falls back to `3000` if none are found in your environment.
 
 ## Credits
 

@@ -1,4 +1,4 @@
-const SERVER_PORT = 3001;
+const LOCAL_PORT = 3001;
 
 const LETTERS_75 = {
   A: [1, 7],
@@ -284,4 +284,4 @@ exports.SIZE = {
   M: 15,
   L: 19,
 };
-exports.SERVER_PORT = SERVER_PORT;
+exports.LOCAL_PORT = LOCAL_PORT;

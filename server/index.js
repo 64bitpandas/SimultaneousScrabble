@@ -48,7 +48,7 @@ app.get('*.js', (req, res, next) => {
 });
 
 // Start your app.
-app.listen(port, host, async err => {
+app.listen(constants.LOCAL_PORT, host, async err => {
   if (err) {
     return logger.error(err.message);
   }
@@ -70,10 +70,10 @@ app.listen(port, host, async err => {
 // Setup socket
 socket.setupSocket(io);
 
-http.listen(constants.SERVER_PORT, () => {
+http.listen(port, () => {
   console.log(
     `--------------------------------\n`.gray +
-      `Server listening on port ${constants.SERVER_PORT}\n`.cyan +
+      `Server listening on port ${port}\n`.cyan +
       `--------------------------------\n`.gray,
   );
 });
