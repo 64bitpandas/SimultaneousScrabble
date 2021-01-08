@@ -7,6 +7,7 @@ const logger = require('./logger');
 const socket = require('./socket');
 const argv = require('./argv');
 const port = require('./port');
+const constants = require('./constants');
 const setup = require('./middlewares/frontendMiddleware');
 const isDev = process.env.NODE_ENV !== 'production';
 const ngrok =
@@ -69,6 +70,10 @@ app.listen(port, host, async err => {
 // Setup socket
 socket.setupSocket(io);
 
-http.listen(3001, () => {
-  console.log('listening on 3001');
+http.listen(constants.SERVER_PORT, () => {
+  console.log(
+    `--------------------------------\n`.gray +
+      `Server listening on port ${constants.SERVER_PORT}\n`.cyan +
+      `--------------------------------\n`.gray,
+  );
 });

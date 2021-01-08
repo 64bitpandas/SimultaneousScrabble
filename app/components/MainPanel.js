@@ -234,7 +234,7 @@ export default class MainPanel extends Component {
           <div className="field">
             <span
               className="label option-label"
-              data-tip="Small: 11x11 (good for mobile) <br/> Medium: 15x15 (standard) <br/> Large: 19x19"
+              data-tip="Small: 11x11 <br/> Standard: 15x15 (normal Scrabble board) <br/> Large: 19x19"
             >
               <span>Board Size</span>
             </span>

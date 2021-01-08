@@ -53,7 +53,11 @@ export function beginConnection(room, name, server, options, creating) {
   Object.keys(options).forEach(option => {
     query += `&${option}=${options[option]}`;
   });
-  socket = io.connect(server === '' ? GLOBAL.LOCALHOST : server, {
+  let serverTo = server;
+  if (serverTo === '') serverTo = GLOBAL.MAIN_SERVER;
+  else if (serverTo === 'DEBUG' || serverTo === 'localhost')
+    serverTo = GLOBAL.LOCALHOST;
+  socket = io.connect(serverTo, {
     query,
     reconnectionAttempts: 1,
     transports: ['websocket', 'polling', 'flashsocket'],
