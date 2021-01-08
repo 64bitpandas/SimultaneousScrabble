@@ -1,4 +1,4 @@
-![SimultaneousScrabble Logo](app/images/SS_Logo_Extended.png)
+![SimultaneousScrabble Logo](app/images/SS_Logo_Outlined.png)
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/acdf0ed5-a24a-416d-83f6-7a39e05aff90/deploy-status)](https://app.netlify.com/sites/simultaneous-scrabble/deploys)
 
