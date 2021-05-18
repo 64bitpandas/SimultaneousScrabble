@@ -5,6 +5,9 @@ import '../css/topbar.css';
 import logo from '../images/SS_Logo_Extended.png';
 import { emit, quitGame, registerTopbar, setError } from './Connection';
 
+/**
+ * The in-game topbar containing current phase, menu buttons, and timer.
+ */
 export default class Topbar extends Component {
   constructor(props) {
     super(props);
@@ -64,6 +67,10 @@ export default class Topbar extends Component {
     </div>
   );
 
+  /**
+   * Takes in the current time (in seconds) and returns a human-readable time for the timer.
+   * @returns {string} A time string in the format MM:SS
+   */
   formattedTime = () => {
     let seconds = '' + (this.state.time % 60);
     const minutes = '' + Math.floor(this.state.time / 60);
@@ -73,11 +80,18 @@ export default class Topbar extends Component {
     return `${minutes}:${seconds}`;
   };
 
+  /**
+   * Sends a startGame signal to the server.
+   */
   startGame = () => {
     // emit('joinRoom', { name: this.state.name, room: this.state.room });
     emit('startGame', { room: this.state.room });
   };
 
+  /**
+   * Calculates the proportion of time remaining in the current phase (for the topbar effect).
+   * @returns {number} Proportion of time remaining in this phase
+   */
   getTimeRatio = () => {
     if (this.state.status === 'playing') {
       return this.state.playTime === 0
@@ -92,6 +106,10 @@ export default class Topbar extends Component {
     return 0;
   };
 
+  /**
+   * Used to append ' notyourturn' to the end of the current status if the current player cannot go yet.
+   * @returns {string} ' notyourturn' or '' depending on the current state
+   */
   getNotTurn = () =>
     !this.state.simultaneous &&
     this.state.currPlaying !== this.state.name &&

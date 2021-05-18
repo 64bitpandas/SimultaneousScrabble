@@ -6,6 +6,7 @@ export const GLOBAL = {
   CHAT_COLOR: '#FFFFFF',
   CHAT_ANNOUNCE_COLOR: '#abcdef',
   SIZE: {
+    // Height/width of small/medium/large board
     S: 11,
     M: 15,
     L: 19,
@@ -14,6 +15,7 @@ export const GLOBAL = {
   MAX_NAME_LENGTH: 30, // character limit for usernames
   TIMEOUT: 30000, // Time before dropping connection attempt, in ms
   LETTER_VALUES: {
+    // Number of points per letter. The following config is from standard Scrabble
     BLANK: 0,
     A: 1,
     B: 3,

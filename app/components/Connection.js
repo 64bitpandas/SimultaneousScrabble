@@ -18,6 +18,11 @@ let errorCache = '';
 let connected = false;
 let setErrorFunc;
 
+/**
+ * Collection of functions used to interface with the server.
+ * All other classes should use this class for any server
+ * communications rather than sending directly.
+ */
 export const Connection = ({ name, room }) => {
   const [error, setErr] = useState(errorCache);
   setErrorFunc = setErr;
@@ -148,11 +153,18 @@ export function beginConnection(room, name, server, options, creating) {
   });
 }
 
+/**
+ * Shortcut to emit an event to the server.
+ * @param {string} event Name of the event to trigger
+ * @param {object} data The data to send
+ */
 export function emit(event, data) {
   if (socket !== undefined) socket.emit(event, data);
   // else error = 'Could not connect to server';
 }
 
+// The following register functions should be called from their respective
+// objects to allow Connection to access their properties.
 export function registerChat(c) {
   chat = c;
 }
@@ -171,6 +183,8 @@ export function registerMainPanel(thisMainPanel) {
 export function registerTopbar(thisTopbar) {
   topbar = thisTopbar;
 }
+// // // // //
+
 export function getGameboard() {
   return gameboard;
 }

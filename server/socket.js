@@ -10,6 +10,7 @@ const serverLog = msg => {
   console.log(`[Server] `.bold.blue + msg);
 };
 
+// The serverside socket.io interface.
 const setupSocket = i => {
   i.on('connection', s => {
     io = i;

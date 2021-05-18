@@ -18,6 +18,10 @@ import Rack from '../../components/Rack';
 import Topbar from '../../components/Topbar';
 import '../../css/game.css';
 
+/**
+ * The main gameplay page. Takes a redirect from the landing page
+ * (along with the information passed in, such as name and room)
+ */
 export default function GamePage(props) {
   if (props.location.state === undefined) {
     return <Redirect to="/" />;

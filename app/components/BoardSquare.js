@@ -5,6 +5,9 @@ import '../css/gameboard.css';
 import { getGameboard, getCurrLetter, setDropped } from './Connection';
 import { GLOBAL } from './GLOBAL';
 
+/**
+ * An object representing a single board square.
+ */
 export const BoardSquare = ({ space, name, canPlace, options }) => {
   const [hover, setHover] = useState(false);
   const [, drop] = useDrop({

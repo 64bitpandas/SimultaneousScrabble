@@ -1,5 +1,8 @@
-const LOCAL_PORT = 3001;
+const LOCAL_PORT = 3001; // Server port
 
+/**
+ * [score, count] pairs for a 75-letter bag configuration
+ */
 const LETTERS_75 = {
   A: [1, 7],
   B: [3, 2],
@@ -29,6 +32,9 @@ const LETTERS_75 = {
   Z: [10, 1],
   BLANK: [0, 2],
 };
+/**
+ * [score, count] pairs for a 100-letter bag configuration
+ */
 const LETTERS_100 = {
   A: [1, 9],
   B: [3, 2],
@@ -58,6 +64,9 @@ const LETTERS_100 = {
   Z: [10, 1],
   BLANK: [0, 2],
 };
+/**
+ * [score, count] pairs for a 150-letter bag configuration
+ */
 const LETTERS_150 = {
   A: [1, 14],
   B: [3, 3],
@@ -87,10 +96,15 @@ const LETTERS_150 = {
   Z: [10, 2],
   BLANK: [0, 3],
 };
+
+// Used for debugging
 const LETTERS_TEST = {
   A: [1, 7],
 };
 
+/**
+ * [row, col] locations for small board modifier squares
+ */
 const SPECIALS_S = {
   TW: [[0, 0], [0, 5], [0, 10], [5, 0], [5, 10], [10, 0], [10, 5], [10, 10]],
   DW: [
@@ -111,6 +125,9 @@ const SPECIALS_S = {
   TL: [[3, 3], [7, 7], [7, 3], [3, 7], [2, 5], [5, 2], [8, 5], [5, 8]],
   CENTER: [[5, 5]],
 };
+/**
+ * [row, col] locations for medium board modifier squares
+ */
 const SPECIALS_M = {
   TW: [[0, 0], [0, 7], [0, 14], [7, 0], [7, 14], [14, 0], [14, 7], [14, 14]],
   DW: [
@@ -173,6 +190,9 @@ const SPECIALS_M = {
   ],
   CENTER: [[7, 7]],
 };
+/**
+ * [row, col] locations for large board modifier squares
+ */
 const SPECIALS_L = {
   TW: [
     [4, 4],
@@ -268,6 +288,7 @@ const SPECIALS_L = {
   CENTER: [[9, 9]],
 };
 
+// Export the above constants in a convenient manner
 exports.LETTERS = {
   75: LETTERS_75,
   100: LETTERS_100,

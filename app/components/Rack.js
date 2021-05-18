@@ -13,6 +13,9 @@ import {
 } from './Connection';
 import { GLOBAL } from './GLOBAL';
 
+/**
+ * The letter rack that displays up to 7 currently unplayed tiles.
+ */
 export default class Rack extends Component {
   constructor(props) {
     super(props);
@@ -141,6 +144,9 @@ export default class Rack extends Component {
 
 let blankInput = '';
 
+/**
+ * Represents a single letter on the rack.
+ */
 export const Letter = ({ letter, id, index, rack }) => {
   // const [, drag] = useDrag({
   //   item: { type: GLOBAL.TILE, letter },
@@ -172,6 +178,9 @@ export const Letter = ({ letter, id, index, rack }) => {
     };
   };
 
+  /**
+   * Allows players to enter custom letters into the blank tile by clicking on it.
+   */
   const handleBlank = () => {
     if (!letter.includes('BLANK') && letter !== '*') return;
     swal({
@@ -220,9 +229,9 @@ export const Letter = ({ letter, id, index, rack }) => {
   const blankInputChange = event => {
     blankInput = event.target.value;
 
-    setTimeout(() => {
-      console.log(blankInput);
-    }, 1000);
+    // setTimeout(() => {
+    //   console.log(blankInput);
+    // }, 1000);
   };
 
   return (

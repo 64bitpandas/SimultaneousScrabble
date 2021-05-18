@@ -51,15 +51,20 @@ require('colors');
  */
 const data = {};
 
-// Stores the game loop interval objects for each active room.
-// Destroy the interval when the game ends.
+/**
+ * Stores the game loop interval objects for each active room.
+ * Destroy the interval when the game ends.
+ */
 const loops = {};
 
 const createRoom = (s, player, room, options) => {
+  // Convert options to their correct data types
   const cleanedOptions = Object.assign({}, options);
   cleanedOptions.playTime = parseInt(options.playTime, 10);
   cleanedOptions.challengeTime = parseInt(options.challengeTime, 10);
   cleanedOptions.simultaneous = options.simultaneous === 'true';
+
+  // Create the default player template
   const defaultPlayer = {
     name: player,
     score: 0,
@@ -69,6 +74,7 @@ const createRoom = (s, player, room, options) => {
     kick: [],
   };
 
+  // Fill in starting data based on options
   data[room] = {
     board: generateBoard(
       constants.SIZE[options.boardSize],
@@ -106,10 +112,13 @@ const joinRoom = (s, player, room) => {
 };
 
 const startGame = room => {
+  // Give each player new tiles
   for (let i = 0; i < data[room].players.length; i += 1) {
     const player = data[room].players[i];
     data[room].players[i].letters.push(...drawTiles(room, player));
   }
+
+  // First round setup
   data[room].status = 'playing';
   data[room].time = data[room].options.playTime;
   data[room].ready = [];
@@ -125,6 +134,7 @@ const startGame = room => {
     );
   }
   socket.sendUpdate(room, data[room]);
+  // Begin game loop
   loops[room] = gameLoop(room);
 };
 
@@ -132,18 +142,20 @@ const getCurrPlayer = room => data[room].options.order[data[room].currPlaying];
 
 const gameLoop = room =>
   setInterval(() => {
+    // If room was destroyed, stop the loop
     if (data[room] === undefined) {
       clearInterval(loops[room]);
       delete loops[room];
       return;
     }
+    // Timer tick
     if (
       (data[room].status === 'playing' && data[room].options.playTime !== 0) ||
       (data[room].status === 'challenging' &&
         data[room].options.challengeTime !== 0)
     )
       data[room].time -= 1;
-
+    // Currently in play phase
     if (
       (((data[room].status === 'playing' &&
         data[room].options.playTime !== 0) ||
@@ -161,6 +173,7 @@ const gameLoop = room =>
           data[room].currPlaying += 1;
         }
 
+        // Switch to challenging phase
         if (
           data[room].options.simultaneous ||
           data[room].currPlaying >= data[room].players.length
@@ -220,6 +233,7 @@ const gameLoop = room =>
         //   `Tiles remaining in ${room}: ${data[room].bag.length}`.blue,
         // );
 
+        // Game over behavior
         if (gameOverIndex >= 0) {
           data[room].status = 'Game Over!';
           socket.sendGlobalAnnouncement(
@@ -257,6 +271,10 @@ const gameLoop = room =>
     socket.sendUpdate(room, data[room]);
   }, 1000);
 
+/**
+ * Fills rack for PLAYER in ROOM, up to 7 tiles.
+ * @returns {Array<string>} List of tiles
+ */
 const drawTiles = (room, player) => {
   const numToDraw = 7 - player.letters.length;
   const tiles = [];
@@ -272,6 +290,12 @@ const drawTiles = (room, player) => {
   return tiles;
 };
 
+/**
+ * Creates a default, empty board based on specifications.
+ * @param {string} size S, M, or L
+ * @param {*} specials List of modifier tiles (see constants.js)
+ * @returns The generated board
+ */
 const generateBoard = (size, specials) => {
   const board = [];
   for (let row = 0; row < size; row += 1) {
@@ -335,12 +359,19 @@ const generateBag = letters => {
   return bagString;
 };
 
+/**
+ * Ensures that the board is valid when a submit request is made. If the board
+ * is not valid, then send an error to the client.
+ * @returns {boolean} True if board is in a valid state, false otherwise.
+ */
 const validateBoard = (s, board, player, room) => {
+  // Not in playing phase
   if (data[room].ready.includes(player) || data[room].status !== 'playing') {
     socket.sendError(s, `You cannot submit at this time.`);
     return false;
   }
 
+  // It's another player's turn right now
   if (!data[room].options.simultaneous && getCurrPlayer(room) !== player) {
     socket.sendError(s, `It's not your turn right now!`);
     return false;
@@ -440,6 +471,10 @@ const validateBoard = (s, board, player, room) => {
   return true;
 };
 
+/**
+ * Returns a board containing only the tiles correctly connected to
+ * the given row/col location.
+ */
 const generateConnected = (board, row, col, visited) => {
   const id = (r, c) => r * board.length + c;
 
@@ -475,6 +510,11 @@ const checkInLine = (board, row, col) => {
   return true;
 };
 
+/**
+ * Recursively evaluates a board containing temporary letters to calculate the
+ * score of any new words that have been played in this turn.
+ * @returns Array of [board, played words]
+ */
 const generateWords = (board, row, col, visited) => {
   const id = (r, c) => r * board.length + c;
   const words = [];
@@ -638,6 +678,7 @@ const setReady = (room, player) => {
   }
 };
 
+// Checks if words played by a player THEM were invalid
 const challenge = (room, you, them) => {
   const invalidWords = [];
   getPlayerData(room, them).words.map(word => {

@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { emit, registerLeaderboard } from './Connection';
 
+/**
+ * Leaderboard widget that displays scores for all players in the room.
+ */
 export default class Leaderboard extends Component {
   constructor(props) {
     super(props);

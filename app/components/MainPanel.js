@@ -11,6 +11,9 @@ import logo from '../images/SS_Logo_Extended.png';
 import { beginConnection, registerMainPanel, setError } from './Connection';
 import { GLOBAL } from './GLOBAL';
 
+/**
+ * The main menu lobby where players enter room information/configuration to set up a game.
+ */
 export default class MainPanel extends Component {
   static propTypes = {
     name: PropTypes.string,

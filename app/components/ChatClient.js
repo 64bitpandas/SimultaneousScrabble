@@ -9,6 +9,9 @@ import { emit, registerChat } from './Connection';
 import { GLOBAL } from './GLOBAL';
 import '../css/chat.css';
 
+/**
+ * Manages player chat and commands.
+ */
 export default class ChatClient extends Component {
   // Use this constructor during init to connect ChatClient to the server
   constructor(props) {
