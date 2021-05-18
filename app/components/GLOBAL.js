@@ -12,7 +12,7 @@ export const GLOBAL = {
   },
   TILE: 'tile', // Accept type for drag and drop
   MAX_NAME_LENGTH: 30, // character limit for usernames
-  TIMEOUT: 3000, // Time before dropping connection attempt, in ms
+  TIMEOUT: 30000, // Time before dropping connection attempt, in ms
   LETTER_VALUES: {
     BLANK: 0,
     A: 1,
