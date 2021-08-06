@@ -74,6 +74,7 @@ export function beginConnection(room, name, server, options, creating) {
   }, GLOBAL.TIMEOUT);
   socket.on('connect', () => {
     connected = true;
+    document.getElementById('loading').style.display = 'none';
   });
   socket.on('serverSendPlayerChat', data => {
     if (chat) {
@@ -195,6 +196,7 @@ export function submit() {
 }
 export function quitGame() {
   chat.appendMessage(`${chat.state.player} has left the game`, 'purple');
+  document.getElementById('loading').style.display = 'fixed';
   connected = false;
   errorCache = '';
   setErrorFunc('');

@@ -14,6 +14,7 @@ import ChatClient from '../../components/ChatClient';
 import { Connection } from '../../components/Connection';
 import Gameboard from '../../components/Gameboard';
 import Leaderboard from '../../components/Leaderboard';
+import Loading from '../../components/Loading';
 import Rack from '../../components/Rack';
 import Topbar from '../../components/Topbar';
 import '../../css/game.css';
@@ -47,6 +48,7 @@ export default function GamePage(props) {
         name={props.location.state.name}
         room={props.location.state.room}
       />
+      <Loading />
       <Topbar
         name={props.location.state.name}
         room={props.location.state.room}
