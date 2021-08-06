@@ -106,6 +106,7 @@ export function beginConnection(room, name, server, options, creating) {
     if (rack) {
       rack.setState({
         letters: data.players.filter(player => player.name === name)[0].letters,
+        isPlaying: data.status === 'playing',
       });
     }
     if (topbar) {

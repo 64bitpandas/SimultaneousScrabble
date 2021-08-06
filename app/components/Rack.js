@@ -23,6 +23,7 @@ export default class Rack extends Component {
       letters: [],
       // eslint-disable-next-line react/no-unused-state
       name: props.name,
+      isPlaying: false,
     };
     registerRack(this);
     emit('forceUpdate', {});
@@ -72,13 +73,15 @@ export default class Rack extends Component {
             Submit
           </button>
           <button
-            className="rack-btn recall"
+            className={
+              this.state.isPlaying ? 'rack-btn skipturn' : 'rack-btn recall'
+            }
             onClick={() => {
               emit('ready');
             }}
             type="button"
           >
-            Ready
+            {this.state.isPlaying ? 'Skip Turn' : 'Ready'}
           </button>
         </div>
       </div>
