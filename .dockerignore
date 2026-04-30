@@ -1,0 +1,11 @@
+node_modules
+build
+coverage
+.git
+.gitignore
+.github
+*.log
+.DS_Store
+screenshots
+Dockerfile
+docker-compose.yml

@@ -69,6 +69,25 @@ For the frontend, run `npm run build` and the app should be available to you in 
 
 For the backend, `npm start` is good enough. The backend will automatically bind to available ports (if the `PORT` variable is set), and falls back to `3000` if none are found in your environment.
 
+### Docker
+
+A `Dockerfile` and `docker-compose.yml` are included for self-hosting both the frontend bundle and the socket.io backend in a single container.
+
+To build and run:
+
+```sh
+docker build --platform=linux/amd64 -t scrabbleserver .
+docker-compose up -d
+```
+
+The frontend will be available at `http://localhost:10003` (mapped from container port `3001`). The socket.io backend listens on container port `3000`; it is reachable from other containers on the same Docker network but is not published to the host by default — add a second port mapping in `docker-compose.yml` if you need it exposed.
+
+Notes:
+ - The image is pinned to `linux/amd64`. `image-webpack-loader` pulls in `gifsicle`, `mozjpeg`, `optipng`, and `pngquant` whose old postinstalls only have x86_64 prebuilt binaries; pinning the platform avoids exec failures when building on Apple Silicon. On an arm64 host, enable Docker Desktop's "Use Rosetta for x86_64/amd64 emulation" for reasonable build times.
+ - The image uses Node 16 because the project's webpack 4 / babel 7.4 toolchain is not compatible with newer Node versions out of the box.
+ - The build runs `npm install --legacy-peer-deps` because the lockfile predates npm 7's strict peer-dependency resolution. Node 16 ships OpenSSL 1.1.1, which webpack 4 is compatible with; if you bump the base image to Node >= 17, also set `NODE_OPTIONS=--openssl-legacy-provider` in the Dockerfile.
+ - `NODE_ENV` is set to `production`, so the server uses `addProdMiddlewares` and serves the prebuilt `build/` directory rather than running webpack-dev-middleware.
+
 ## Credits
 
 Created by [Ben Cuan](https://bencuan.me) using Node.js, Express, Socket.io, React

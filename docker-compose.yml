@@ -1,0 +1,8 @@
+services:
+  scrabble:
+    image: scrabbleserver:latest
+    platform: linux/amd64
+    container_name: scrabble
+    restart: unless-stopped
+    ports:
+      - "10003:3000"
