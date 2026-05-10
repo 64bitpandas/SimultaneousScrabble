@@ -65,4 +65,7 @@ COPY --from=builder /app/package.json ./package.json
 # 3000: socket.io backend
 EXPOSE 3000 3001
 
-CMD ["npm", "start"]
+# Use start:prod (plain `node server`) rather than `npm start`, which runs
+# nodemon. nodemon swallows app crashes and waits for file changes, which
+# prevents the container from exiting and defeats Docker's restart policy.
+CMD ["npm", "run", "start:prod"]

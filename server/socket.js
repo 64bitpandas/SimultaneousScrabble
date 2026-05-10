@@ -161,13 +161,18 @@ const setupSocket = i => {
 
     s.to(room).on('votekick', data => {
       if (data.you !== data.them) {
+        const target = game.getPlayerData(room, data.them);
+        if (target === undefined) {
+          sendError(s, `${data.them} is not in this room.`);
+          return;
+        }
         const playersNeeded = game.getData(room).players.length - 1;
-        if (!game.getPlayerData(room, data.them).kick.includes(data.you)) {
+        if (!target.kick.includes(data.you)) {
           game.setPlayerData(
             room,
             data.them,
             'kick',
-            game.getPlayerData(room, data.them).kick.concat([data.you]),
+            target.kick.concat([data.you]),
           );
         }
         sendGlobalAnnouncement(
